@@ -1,5 +1,6 @@
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import gsap from "gsap";
+import { useGSAP } from "@gsap/react";
 
 const colors = ["#ea4335", "#fbbc04", "#34a853", "#4285f4", "#9334e6"];
 
@@ -9,16 +10,13 @@ function App() {
   const [inputValue, setInputValue] = useState("");
   const sendButtonRef = useRef<HTMLButtonElement>(null);
 
-  useEffect(() => {
+  useGSAP(() => {
     if (pathRef.current) {
       const pathLength = pathRef.current.getTotalLength();
       const numSegments = colors.length;
-
-      // Each segment takes up 1/5 of the border, with small gaps between
-      const segmentLength = (pathLength / numSegments) * 1.5; // Slightly overlapping`;
+      const segmentLength = (pathLength / numSegments) * 1.5;
       const spacing = segmentLength;
 
-      // Animate each segment - use shared time for synchronization
       let sharedStartTime: number | null = null;
       let animationId: number;
 
@@ -26,7 +24,6 @@ function App() {
         if (sharedStartTime === null) sharedStartTime = currentTime;
 
         const elapsed = (currentTime - sharedStartTime) / 1000;
-        // Move by pathLength for seamless visual wrap
         const movement = (elapsed / 4) * pathLength;
         const wrappedMovement = movement - Math.floor(movement / pathLength) * pathLength;
 
@@ -36,56 +33,28 @@ function App() {
             const segmentOffset = -offset - wrappedMovement;
             segment.style.strokeDashoffset = `${segmentOffset}px`;
 
-            // Calculate smooth incremental fade for each segment
-            // Normalize the offset to get position (0 to pathLength)
             const normalizedOffset = ((segmentOffset % pathLength) + pathLength) % pathLength;
-
-            // Calculate the center position of the visible segment
             const segmentCenter = (normalizedOffset + segmentLength / 2) % pathLength;
-
-            // Each segment has a phase offset for incremental fading
-            // This creates a staggered fade where each segment fades at different positions
             const phaseIncrement = pathLength / numSegments;
             const segmentPhase = index * phaseIncrement;
-
-            // Combine segment center with phase to get fade position
-            // This ensures each segment fades at a different point in the cycle
             const fadePosition = (segmentCenter + segmentPhase) % pathLength;
-
-            // Create a perfectly smooth, continuous fade function
-            // Normalize position to 0-1 range for easier calculation
             const normalizedPos = fadePosition / pathLength;
+            const fadeEnd = 0.25;
+            const transitionStart = 0.45;
 
-            // Speed up fade: fade completes in first 40% of path, then stay transparent briefly, then fade back in
-            // This ensures the fade animation completes well before the border loops
-            const fadeEnd = 0.25; // Fade out completes at 25% of path
-            const transitionStart = 0.45; // Start transitioning back to opaque at 45%
-
-            // Calculate fade progress ensuring perfect continuity
             let fadeProgress = 0;
-
             if (normalizedPos <= fadeEnd) {
-              // Fade zone: smoothly fade from opaque (0) to transparent (1)
               fadeProgress = normalizedPos / fadeEnd;
             } else if (normalizedPos >= transitionStart) {
-              // Transition zone: smoothly fade back from transparent to opaque
               const transitionProgress = (normalizedPos - transitionStart) / (1 - transitionStart);
-              // Use smoothstep for ultra-smooth transition
               const smoothTransition = transitionProgress * transitionProgress * (3 - 2 * transitionProgress);
               fadeProgress = 1 - smoothTransition;
             } else {
-              // Middle zone: fully transparent
               fadeProgress = 1;
             }
 
-            // Apply smoothstep easing for ultra-smooth fade curve
-            // This ensures C1 continuity (smooth function and derivative)
             const easedProgress = fadeProgress * fadeProgress * (3 - 2 * fadeProgress);
-
-            // Calculate final opacity: 1 = opaque, 0 = transparent
             const opacity = 1 - easedProgress;
-
-            // Set opacity - browser will interpolate smoothly between animation frames
             segment.style.opacity = opacity.toString();
           }
         });
@@ -93,7 +62,6 @@ function App() {
         animationId = requestAnimationFrame(animate);
       }
 
-      // Set initial dash arrays and opacity
       segmentsRef.current.forEach((segment, index) => {
         if (segment) {
           const offset = spacing * index;
@@ -105,51 +73,43 @@ function App() {
         }
       });
 
-      // Start animation
       animationId = requestAnimationFrame(animate);
 
-      // Cleanup function
       return () => {
         cancelAnimationFrame(animationId);
       };
     }
-  }, []);
+  });
 
-  // Initialize send button as hidden
-  useEffect(() => {
-    if (sendButtonRef.current) {
-      gsap.set(sendButtonRef.current, {
+  useGSAP(() => {
+    gsap.set(sendButtonRef.current, {
+      opacity: 0,
+      scale: 0.8,
+      x: 10,
+      y: "-50%",
+      transformOrigin: "center center",
+    });
+  });
+
+  useGSAP(() => {
+    if (inputValue.trim().length > 0) {
+      gsap.to(sendButtonRef.current, {
+        opacity: 1,
+        scale: 1,
+        x: 0,
+        y: "-50%",
+        duration: 0.3,
+        ease: "back.out(1.2)",
+      });
+    } else {
+      gsap.to(sendButtonRef.current, {
         opacity: 0,
         scale: 0.8,
         x: 10,
         y: "-50%",
-        transformOrigin: "center center",
+        duration: 0.2,
+        ease: "power2.in",
       });
-    }
-  }, []);
-
-  // Animate send button in/out based on input content
-  useEffect(() => {
-    if (sendButtonRef.current) {
-      if (inputValue.trim().length > 0) {
-        gsap.to(sendButtonRef.current, {
-          opacity: 1,
-          scale: 1,
-          x: 0,
-          y: "-50%",
-          duration: 0.3,
-          ease: "back.out(1.2)",
-        });
-      } else {
-        gsap.to(sendButtonRef.current, {
-          opacity: 0,
-          scale: 0.8,
-          x: 10,
-          y: "-50%",
-          duration: 0.2,
-          ease: "power2.in",
-        });
-      }
     }
   }, [inputValue]);
 
