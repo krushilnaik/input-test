@@ -29,6 +29,9 @@ function App() {
       const movement = (elapsed / 3) * pathLength;
       
       if (elapsed >= 1.5) {
+        segmentsRef.current.forEach((segment) => {
+          if (segment) segment.style.opacity = '0';
+        });
         setIsAnimating(false);
         cancelAnimationFrame(animationId);
         return;
