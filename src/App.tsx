@@ -2,116 +2,113 @@ import { useRef, useState } from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 
-const colors = ["#ea4335", "#fbbc04", "#34a853", "#4285f4", "#9334e6"];
+const colors = ["#ea4335", "#ea4335", "#fbbc04", "#34a853", "#4285f4", "#4285f4", "#9334e6"];
 
 function App() {
   const pathRef = useRef<SVGPathElement>(null);
   const segmentsRef = useRef<(SVGPathElement | null)[]>([]);
   const [inputValue, setInputValue] = useState("");
-  const sendButtonRef = useRef<HTMLButtonElement>(null);
+  const [isAnimating, setIsAnimating] = useState(false);
+
+  const startAnimation = () => {
+    if (!pathRef.current || isAnimating) return;
+    
+    setIsAnimating(true);
+    const pathLength = pathRef.current.getTotalLength();
+    const numSegments = colors.length;
+    const segmentLength = (pathLength / numSegments) * 1.5;
+    const spacing = segmentLength;
+
+    let sharedStartTime: number | null = null;
+    let animationId: number;
+
+    function animate(currentTime: number) {
+      if (sharedStartTime === null) sharedStartTime = currentTime;
+
+      const elapsed = (currentTime - sharedStartTime) / 1000;
+      const movement = (elapsed / 3) * pathLength;
+      
+      if (elapsed >= 1.5) {
+        setIsAnimating(false);
+        cancelAnimationFrame(animationId);
+        return;
+      }
+      const wrappedMovement = movement - Math.floor(movement / pathLength) * pathLength;
+
+      segmentsRef.current.forEach((segment, index) => {
+        if (segment) {
+          const offset = spacing * index;
+          const segmentOffset = -offset - wrappedMovement;
+          segment.style.strokeDashoffset = `${segmentOffset}px`;
+
+          const normalizedOffset = ((segmentOffset % pathLength) + pathLength) % pathLength;
+          const segmentCenter = (normalizedOffset + segmentLength / 2) % pathLength;
+          const phaseIncrement = pathLength / numSegments;
+          const segmentPhase = index * phaseIncrement;
+          const fadePosition = (segmentCenter + segmentPhase) % pathLength;
+          const normalizedPos = fadePosition / pathLength;
+          const fadeEnd = 0.25;
+          const transitionStart = 0.45;
+
+          let fadeProgress = 0;
+          if (normalizedPos <= fadeEnd) {
+            fadeProgress = normalizedPos / fadeEnd;
+          } else if (normalizedPos >= transitionStart) {
+            const transitionProgress = (normalizedPos - transitionStart) / (1 - transitionStart);
+            const smoothTransition = transitionProgress * transitionProgress * (3 - 2 * transitionProgress);
+            fadeProgress = 1 - smoothTransition;
+          } else {
+            fadeProgress = 1;
+          }
+
+          const easedProgress = fadeProgress * fadeProgress * (3 - 2 * fadeProgress);
+          const baseOpacity = 1 - easedProgress;
+          
+          // Add staggered fade-in effect
+          const staggerDelay = index * 0.1; // 0.1s delay between each color
+          const fadeInProgress = Math.max(0, Math.min(1, (elapsed - staggerDelay) / 0.3)); // 0.3s fade-in duration
+          const finalOpacity = baseOpacity * fadeInProgress;
+          
+          segment.style.opacity = finalOpacity.toString();
+        }
+      });
+
+      animationId = requestAnimationFrame(animate);
+    }
+
+    segmentsRef.current.forEach((segment, index) => {
+      if (segment) {
+        const offset = spacing * index;
+        gsap.set(segment, {
+          strokeDasharray: `${segmentLength} ${pathLength}`,
+          strokeDashoffset: -offset,
+          opacity: 0,
+        });
+      }
+    });
+
+    animationId = requestAnimationFrame(animate);
+  };
 
   useGSAP(() => {
     if (pathRef.current) {
       const pathLength = pathRef.current.getTotalLength();
       const numSegments = colors.length;
       const segmentLength = (pathLength / numSegments) * 1.5;
-      const spacing = segmentLength;
-
-      let sharedStartTime: number | null = null;
-      let animationId: number;
-
-      function animate(currentTime: number) {
-        if (sharedStartTime === null) sharedStartTime = currentTime;
-
-        const elapsed = (currentTime - sharedStartTime) / 1000;
-        const movement = (elapsed / 4) * pathLength;
-        const wrappedMovement = movement - Math.floor(movement / pathLength) * pathLength;
-
-        segmentsRef.current.forEach((segment, index) => {
-          if (segment) {
-            const offset = spacing * index;
-            const segmentOffset = -offset - wrappedMovement;
-            segment.style.strokeDashoffset = `${segmentOffset}px`;
-
-            const normalizedOffset = ((segmentOffset % pathLength) + pathLength) % pathLength;
-            const segmentCenter = (normalizedOffset + segmentLength / 2) % pathLength;
-            const phaseIncrement = pathLength / numSegments;
-            const segmentPhase = index * phaseIncrement;
-            const fadePosition = (segmentCenter + segmentPhase) % pathLength;
-            const normalizedPos = fadePosition / pathLength;
-            const fadeEnd = 0.25;
-            const transitionStart = 0.45;
-
-            let fadeProgress = 0;
-            if (normalizedPos <= fadeEnd) {
-              fadeProgress = normalizedPos / fadeEnd;
-            } else if (normalizedPos >= transitionStart) {
-              const transitionProgress = (normalizedPos - transitionStart) / (1 - transitionStart);
-              const smoothTransition = transitionProgress * transitionProgress * (3 - 2 * transitionProgress);
-              fadeProgress = 1 - smoothTransition;
-            } else {
-              fadeProgress = 1;
-            }
-
-            const easedProgress = fadeProgress * fadeProgress * (3 - 2 * fadeProgress);
-            const opacity = 1 - easedProgress;
-            segment.style.opacity = opacity.toString();
-          }
-        });
-
-        animationId = requestAnimationFrame(animate);
-      }
-
+      
       segmentsRef.current.forEach((segment, index) => {
         if (segment) {
+          const spacing = segmentLength;
           const offset = spacing * index;
           gsap.set(segment, {
             strokeDasharray: `${segmentLength} ${pathLength}`,
             strokeDashoffset: -offset,
-            opacity: 1,
+            opacity: 0,
           });
         }
       });
-
-      animationId = requestAnimationFrame(animate);
-
-      return () => {
-        cancelAnimationFrame(animationId);
-      };
     }
   });
-
-  useGSAP(() => {
-    gsap.set(sendButtonRef.current, {
-      opacity: 0,
-      scale: 0.8,
-      x: 10,
-      y: "-50%",
-      transformOrigin: "center center",
-    });
-  });
-
-  useGSAP(() => {
-    if (inputValue.trim().length > 0) {
-      gsap.to(sendButtonRef.current, {
-        opacity: 1,
-        scale: 1,
-        x: 0,
-        y: "-50%",
-        duration: 0.3,
-        ease: "back.out(1.2)",
-      });
-    } else {
-      gsap.to(sendButtonRef.current, {
-        opacity: 0,
-        scale: 0.8,
-        x: 10,
-        y: "-50%",
-        duration: 0.2,
-        ease: "power2.in",
-      });
-    }
-  }, [inputValue]);
 
   // Calculate dimensions based on input field
   // Input width: w-72 = 288px (18rem)
@@ -143,7 +140,6 @@ function App() {
 
   return (
     <main className="grid place-content-center min-h-screen w-full bg-gray-900 gap-4">
-      <h1>Hi</h1>
       <div className="relative">
         <svg
           className="absolute inset-0 pointer-events-none"
@@ -191,28 +187,15 @@ function App() {
             className="px-4 py-3 pr-12 rounded-lg bg-gray-800 text-white placeholder:text-gray-400 outline-none w-72 relative"
             placeholder="Ask anything..."
           />
-          <button
-            ref={sendButtonRef}
-            className="absolute right-2 top-1/2 w-8 h-8 rounded-full bg-linear-to-r from-blue-500 to-purple-600 flex items-center justify-center shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed group"
-            disabled={!inputValue.trim()}
-            aria-label="Send"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className="w-4 h-4 text-white transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
-            >
-              <line x1="22" y1="2" x2="11" y2="13"></line>
-              <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
-            </svg>
-          </button>
         </div>
       </div>
+      <button
+        onClick={startAnimation}
+        disabled={isAnimating}
+        className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+      >
+        {isAnimating ? 'Animating...' : 'Animate'}
+      </button>
     </main>
   );
 }
