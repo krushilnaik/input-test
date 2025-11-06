@@ -2,6 +2,8 @@ import { useRef, useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
+import { FolderIcon } from "../atoms/FolderIcon";
+import { UploadIcon } from "../atoms/UploadIcon";
 
 interface AttachPopoverProps {
   isOpen: boolean;
@@ -159,23 +161,7 @@ export function AttachPopover({ isOpen, onClose, onUseExisting, onUploadNew, but
           onMouseDown={(e) => e.stopPropagation()}
           className="w-full px-4 py-2.5 text-left text-white hover:bg-gray-700 transition-colors text-sm flex items-center gap-3"
         >
-          <svg
-            width="16"
-            height="16"
-            viewBox="0 0 16 16"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-            className="shrink-0"
-          >
-            <path
-              d="M8 2L3 5V13C3 13.5523 3.44772 14 4 14H12C12.5523 14 13 13.5523 13 13V5L8 2Z"
-              stroke="currentColor"
-              strokeWidth="1.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              fill="none"
-            />
-          </svg>
+          <FolderIcon className="shrink-0" />
           <span>Use existing file</span>
         </button>
         <button
@@ -192,22 +178,7 @@ export function AttachPopover({ isOpen, onClose, onUseExisting, onUploadNew, but
           type="button"
           className="w-full px-4 py-2.5 text-left text-white hover:bg-gray-700 transition-colors text-sm flex items-center gap-3"
         >
-          <svg
-            width="16"
-            height="16"
-            viewBox="0 0 16 16"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-            className="shrink-0"
-          >
-            <path
-              d="M8 3V11M8 3L5 6M8 3L11 6M3 11H13"
-              stroke="currentColor"
-              strokeWidth="1.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
+          <UploadIcon className="shrink-0" />
           <span>Upload new file</span>
         </button>
       </div>

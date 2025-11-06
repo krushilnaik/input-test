@@ -1,12 +1,12 @@
-import { useRef, useState, useCallback, useEffect } from "react";
-import { useGSAP } from "@gsap/react";
+import { useRef, useState, useCallback, useEffect, useLayoutEffect } from "react";
 import gsap from "gsap";
-import { INPUT_DIMENSIONS, COLORS } from "../constants";
+import { COLORS, INPUT_DIMENSIONS } from "../constants";
 import { useBorderAnimation } from "../hooks/useBorderAnimation";
 import { BorderAnimation } from "./BorderAnimation";
 import { AttachButton } from "./AttachButton";
 import { SendButton } from "./SendButton";
 import { FilePills } from "./FilePills";
+import { SuggestionPills } from "./SuggestionPills";
 
 interface AnimatedInputProps {
   onReady?: (controls: { startAnimation: () => void; isAnimating: boolean }) => void;
@@ -23,6 +23,8 @@ export function AnimatedInput({ onReady }: AnimatedInputProps) {
   const [inputValue, setInputValue] = useState("");
   const [isAnimating, setIsAnimating] = useState(false);
   const [files, setFiles] = useState<File[]>([]);
+  const [shouldAnimatePills, setShouldAnimatePills] = useState(false);
+  const hasStartedRef = useRef(false);
 
   const handleFileUpload = useCallback((file: File) => {
     console.log("[AnimatedInput] handleFileUpload called with file:", file.name, file.size);
@@ -30,6 +32,20 @@ export function AnimatedInput({ onReady }: AnimatedInputProps) {
       const newFiles = [...prev, file];
       console.log(
         "[AnimatedInput] Files state updated, count:",
+        newFiles.length,
+        "files:",
+        newFiles.map((f) => f.name)
+      );
+      return newFiles;
+    });
+  }, []);
+
+  const handleFileRemove = useCallback((fileToRemove: File) => {
+    console.log("[AnimatedInput] handleFileRemove called with file:", fileToRemove.name);
+    setFiles((prev) => {
+      const newFiles = prev.filter((file) => file.name !== fileToRemove.name || file.size !== fileToRemove.size);
+      console.log(
+        "[AnimatedInput] Files state updated after remove, count:",
         newFiles.length,
         "files:",
         newFiles.map((f) => f.name)
@@ -74,6 +90,7 @@ export function AnimatedInput({ onReady }: AnimatedInputProps) {
   });
 
   const handleStartAnimation = useCallback(() => {
+    setShouldAnimatePills(true);
     startAnimation(setIsAnimating, resetSegments);
   }, [startAnimation, resetSegments]);
 
@@ -85,14 +102,20 @@ export function AnimatedInput({ onReady }: AnimatedInputProps) {
     const segmentLength = (pathLength / numSegments) * 1.5;
     const spacing = segmentLength;
 
-    // Initialize glow segments
+    // Initialize glow segments with fade-in animation
     glowSegmentsRef.current.forEach((segment, index) => {
       if (segment) {
         const offset = spacing * index;
         gsap.set(segment, {
           strokeDasharray: `${segmentLength} ${pathLength}`,
           strokeDashoffset: -offset,
+          opacity: 0,
+        });
+        // Fade in smoothly
+        gsap.to(segment, {
           opacity: 0.4,
+          duration: 0.3,
+          ease: "power2.out",
         });
       }
     });
@@ -148,17 +171,35 @@ export function AnimatedInput({ onReady }: AnimatedInputProps) {
     stopGlowAnimation();
   }, [stopGlowAnimation]);
 
-  useGSAP(() => {
-    // Set initial visible state for container
+  // Set initial state immediately to prevent flash
+  useLayoutEffect(() => {
     if (containerRef.current) {
+      const finalWidth = INPUT_DIMENSIONS.width;
+      const finalHeight = INPUT_DIMENSIONS.height;
+      const initialHeight = finalHeight * 0.6;
+
       gsap.set(containerRef.current, {
-        width: INPUT_DIMENSIONS.width,
-        height: INPUT_DIMENSIONS.height,
-        opacity: 1,
-        y: 0,
+        width: finalWidth,
+        height: initialHeight,
+        opacity: 0,
+        y: 60,
       });
     }
   }, []);
+
+  // Start animation automatically on mount (only once)
+  useEffect(() => {
+    if (hasStartedRef.current) return;
+
+    // Small delay to ensure DOM is ready
+    const timer = setTimeout(() => {
+      hasStartedRef.current = true;
+      setShouldAnimatePills(true);
+      startAnimation(setIsAnimating, resetSegments);
+    }, 50);
+
+    return () => clearTimeout(timer);
+  }, [startAnimation, resetSegments, setIsAnimating]);
 
   useEffect(() => {
     onReady?.({ startAnimation: handleStartAnimation, isAnimating });
@@ -173,9 +214,22 @@ export function AnimatedInput({ onReady }: AnimatedInputProps) {
     };
   }, []);
 
+  const finalWidth = INPUT_DIMENSIONS.width;
+  const finalHeight = INPUT_DIMENSIONS.height;
+  const initialHeight = finalHeight * 0.6;
+
   return (
-    <div className="flex flex-col items-center">
-      <div ref={containerRef} className="relative glass rounded-2xl overflow-hidden bg-black/20">
+    <div className="flex flex-col">
+      <div
+        ref={containerRef}
+        className="relative glass rounded-2xl overflow-hidden bg-black/20"
+        style={{
+          width: finalWidth,
+          height: initialHeight,
+          opacity: 0,
+          transform: "translateY(60px)",
+        }}
+      >
         <BorderAnimation pathRef={pathRef} segmentsRef={segmentsRef} glowSegmentsRef={glowSegmentsRef} />
         <div className="relative flex items-center h-full w-full">
           <AttachButton onFileUpload={handleFileUpload} />
@@ -192,7 +246,8 @@ export function AnimatedInput({ onReady }: AnimatedInputProps) {
           <SendButton inputValue={inputValue} />
         </div>
       </div>
-      <FilePills files={files} />
+      <SuggestionPills shouldAnimate={shouldAnimatePills} />
+      <FilePills files={files} onRemove={handleFileRemove} />
     </div>
   );
 }

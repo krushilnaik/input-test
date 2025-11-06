@@ -14,8 +14,17 @@ export function useBorderAnimation({
   containerRef,
   borderAnimationStartedRef,
 }: UseBorderAnimationParams) {
+  const borderAnimationIdRef = { current: null as number | null };
+  const timelineRef = { current: null as gsap.core.Timeline | null };
+
   const startIntroBorderAnimation = () => {
     if (!pathRef.current) return;
+    
+    // Cancel any existing border animation
+    if (borderAnimationIdRef.current !== null) {
+      cancelAnimationFrame(borderAnimationIdRef.current);
+      borderAnimationIdRef.current = null;
+    }
 
     const pathLength = pathRef.current.getTotalLength();
     const numSegments = COLORS.length;
@@ -36,6 +45,7 @@ export function useBorderAnimation({
           if (segment) segment.style.opacity = "0";
         });
         cancelAnimationFrame(animationId);
+        borderAnimationIdRef.current = null;
         return;
       }
       const wrappedMovement = movement - Math.floor(movement / pathLength) * pathLength;
@@ -78,6 +88,7 @@ export function useBorderAnimation({
       });
 
       animationId = requestAnimationFrame(animate);
+      borderAnimationIdRef.current = animationId;
     }
 
     segmentsRef.current.forEach((segment, index) => {
@@ -92,10 +103,17 @@ export function useBorderAnimation({
     });
 
     animationId = requestAnimationFrame(animate);
+    borderAnimationIdRef.current = animationId;
   };
 
   const startAnimation = (setIsAnimating: (value: boolean) => void, resetSegments: () => void) => {
     if (!pathRef.current || !containerRef.current) return;
+
+    // Kill any existing timeline
+    if (timelineRef.current) {
+      timelineRef.current.kill();
+      timelineRef.current = null;
+    }
 
     setIsAnimating(true);
     borderAnimationStartedRef.current = false;
@@ -122,8 +140,11 @@ export function useBorderAnimation({
         if (containerRef.current) {
           gsap.set(containerRef.current, { width: finalWidth, height: finalHeight, opacity: 1, y: 0 });
         }
+        timelineRef.current = null;
       },
     });
+    
+    timelineRef.current = timeline;
 
     timeline.to(containerRef.current, {
       height: finalHeight,

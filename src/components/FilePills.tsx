@@ -1,11 +1,14 @@
 import { useRef, useEffect } from "react";
 import gsap from "gsap";
+import { FileIcon } from "../atoms/FileIcon";
+import { CloseIcon } from "../atoms/CloseIcon";
 
 interface FilePillsProps {
   files: File[];
+  onRemove: (file: File) => void;
 }
 
-export function FilePills({ files }: FilePillsProps) {
+export function FilePills({ files, onRemove }: FilePillsProps) {
   const pillRefs = useRef<Map<string, HTMLDivElement>>(new Map());
   const previousFilesLengthRef = useRef(0);
 
@@ -29,33 +32,31 @@ export function FilePills({ files }: FilePillsProps) {
 
       // Use requestAnimationFrame to ensure DOM is updated and refs are set
       requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-          newFiles.forEach((file, relativeIndex) => {
-            const key = `${file.name}-${file.size}`;
-            const pillRef = pillRefs.current.get(key);
+        newFiles.forEach((file, relativeIndex) => {
+          const key = `${file.name}-${file.size}`;
+          const pillRef = pillRefs.current.get(key);
 
-            if (pillRef) {
-              console.log("[FilePills] Animating pill for:", file.name);
-              // Set initial state
-              gsap.set(pillRef, {
-                scale: 0,
-                opacity: 0,
-                y: -10,
-              });
+          if (pillRef) {
+            console.log("[FilePills] Animating pill for:", file.name);
+            // Set initial state
+            gsap.set(pillRef, {
+              scale: 0,
+              opacity: 0,
+              y: -10,
+            });
 
-              // Animate in
-              gsap.to(pillRef, {
-                scale: 1,
-                opacity: 1,
-                y: 0,
-                duration: 0.4,
-                ease: "back.out(1.4)",
-                delay: relativeIndex * 0.1,
-              });
-            } else {
-              console.log("[FilePills] Pill ref not found for:", key);
-            }
-          });
+            // Animate in
+            gsap.to(pillRef, {
+              scale: 1,
+              opacity: 1,
+              y: 0,
+              duration: 0.4,
+              ease: "back.out(1.4)",
+              delay: relativeIndex * 0.1,
+            });
+          } else {
+            console.log("[FilePills] Pill ref not found for:", key);
+          }
         });
       });
     }
@@ -84,24 +85,15 @@ export function FilePills({ files }: FilePillsProps) {
             }}
             className="glass rounded-full px-4 py-2 bg-black/20 text-white text-sm flex items-center gap-2"
           >
-            <svg
-              width="14"
-              height="14"
-              viewBox="0 0 14 14"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-              className="shrink-0"
-            >
-              <path
-                d="M3.5 2.33333C3.5 1.8731 3.8731 1.5 4.33333 1.5H7.58333C7.81333 1.5 8.03333 1.59167 8.19167 1.75L10.25 3.80833C10.4083 3.96667 10.5 4.18667 10.5 4.41667V11.6667C10.5 12.1269 10.1269 12.5 9.66667 12.5H4.33333C3.8731 12.5 3.5 12.1269 3.5 11.6667V2.33333Z"
-                stroke="currentColor"
-                strokeWidth="1.2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                fill="none"
-              />
-            </svg>
+            <FileIcon className="shrink-0" />
             <span className="max-w-[200px] truncate">{file.name}</span>
+            <button
+              onClick={() => onRemove(file)}
+              className="shrink-0 hover:opacity-70 transition-opacity ml-1"
+              aria-label={`Remove ${file.name}`}
+            >
+              <CloseIcon />
+            </button>
           </div>
         );
       })}
