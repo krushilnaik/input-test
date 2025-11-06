@@ -1,1 +1,30 @@
 @import "tailwindcss";
+
+
+/* liquid glass */
+.glass {
+	position: relative;
+	z-index: 1;
+	filter: drop-shadow(-8px -10px 46px #0000005f);
+	backdrop-filter: brightness(1.1) blur(2px) url(#displacementFilter);
+
+	& > * {
+		z-index: 10;
+	}
+}
+
+.glass::before {
+	content: "";
+	position: absolute;
+	inset: 0;
+	z-index: -1;
+	overflow: hidden;
+	border-radius: inherit;
+	-webkit-box-shadow:
+		inset 2px 2px 0px -2px rgba(255, 255, 255, 0.25),
+		inset 0 0 3px 1px rgba(255, 255, 255, 0.25);
+	box-shadow:
+		inset 6px 6px 0px -6px rgba(255, 255, 255, 0.25),
+		inset -6px -6px 0px -6px rgba(255, 255, 255, 0.25),
+		inset 0 0 4px 1px rgba(255, 255, 255, 0.25);
+}
