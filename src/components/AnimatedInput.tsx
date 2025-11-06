@@ -1,7 +1,7 @@
 import { useRef, useState, useCallback, useEffect } from "react";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
-import { calculateInputDimensions, COLORS } from "../constants";
+import { INPUT_DIMENSIONS, COLORS } from "../constants";
 import { useBorderAnimation } from "../hooks/useBorderAnimation";
 import { BorderAnimation } from "./BorderAnimation";
 import { AttachButton } from "./AttachButton";
@@ -15,8 +15,11 @@ interface AnimatedInputProps {
 export function AnimatedInput({ onReady }: AnimatedInputProps) {
   const pathRef = useRef<SVGPathElement>(null);
   const segmentsRef = useRef<(SVGPathElement | null)[]>([]);
+  const glowSegmentsRef = useRef<(SVGPathElement | null)[]>([]);
   const containerRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
   const borderAnimationStartedRef = useRef(false);
+  const glowAnimationIdRef = useRef<number | null>(null);
   const [inputValue, setInputValue] = useState("");
   const [isAnimating, setIsAnimating] = useState(false);
   const [files, setFiles] = useState<File[]>([]);
@@ -74,13 +77,83 @@ export function AnimatedInput({ onReady }: AnimatedInputProps) {
     startAnimation(setIsAnimating, resetSegments);
   }, [startAnimation, resetSegments]);
 
+  const startGlowAnimation = useCallback(() => {
+    if (!pathRef.current || glowAnimationIdRef.current !== null) return;
+
+    const pathLength = pathRef.current.getTotalLength();
+    const numSegments = COLORS.length;
+    const segmentLength = (pathLength / numSegments) * 1.5;
+    const spacing = segmentLength;
+
+    // Initialize glow segments
+    glowSegmentsRef.current.forEach((segment, index) => {
+      if (segment) {
+        const offset = spacing * index;
+        gsap.set(segment, {
+          strokeDasharray: `${segmentLength} ${pathLength}`,
+          strokeDashoffset: -offset,
+          opacity: 0.4,
+        });
+      }
+    });
+
+    let startTime: number | null = null;
+    const animationSpeed = 5; // seconds per full rotation
+
+    function animateGlow(currentTime: number) {
+      if (startTime === null) startTime = currentTime;
+      const elapsed = (currentTime - startTime) / 1000;
+      const movement = (elapsed / animationSpeed) * pathLength;
+      const wrappedMovement = movement - Math.floor(movement / pathLength) * pathLength;
+
+      glowSegmentsRef.current.forEach((segment, index) => {
+        if (segment) {
+          const offset = spacing * index;
+          const segmentOffset = -offset - wrappedMovement;
+          segment.style.strokeDashoffset = `${segmentOffset}px`;
+        }
+      });
+
+      if (glowAnimationIdRef.current !== null) {
+        glowAnimationIdRef.current = requestAnimationFrame(animateGlow);
+      }
+    }
+
+    glowAnimationIdRef.current = requestAnimationFrame(animateGlow);
+  }, []);
+
+  const stopGlowAnimation = useCallback(() => {
+    if (glowAnimationIdRef.current !== null) {
+      cancelAnimationFrame(glowAnimationIdRef.current);
+      glowAnimationIdRef.current = null;
+    }
+
+    // Fade out glow segments
+    glowSegmentsRef.current.forEach((segment) => {
+      if (segment) {
+        gsap.to(segment, {
+          opacity: 0,
+          duration: 0.3,
+          ease: "power2.out",
+        });
+      }
+    });
+  }, []);
+
+  const handleFocus = useCallback(() => {
+    startGlowAnimation();
+  }, [startGlowAnimation]);
+
+  const handleBlur = useCallback(() => {
+    stopGlowAnimation();
+  }, [stopGlowAnimation]);
+
   useGSAP(() => {
     // Set initial visible state for container
     if (containerRef.current) {
-      const { width: finalWidth, height: finalHeight } = calculateInputDimensions();
       gsap.set(containerRef.current, {
-        width: finalWidth,
-        height: finalHeight,
+        width: INPUT_DIMENSIONS.width,
+        height: INPUT_DIMENSIONS.height,
         opacity: 1,
         y: 0,
       });
@@ -91,16 +164,28 @@ export function AnimatedInput({ onReady }: AnimatedInputProps) {
     onReady?.({ startAnimation: handleStartAnimation, isAnimating });
   }, [handleStartAnimation, isAnimating, onReady]);
 
+  // Cleanup glow animation on unmount
+  useEffect(() => {
+    return () => {
+      if (glowAnimationIdRef.current !== null) {
+        cancelAnimationFrame(glowAnimationIdRef.current);
+      }
+    };
+  }, []);
+
   return (
     <div className="flex flex-col items-center">
       <div ref={containerRef} className="relative glass rounded-2xl overflow-hidden bg-black/20">
-        <BorderAnimation pathRef={pathRef} segmentsRef={segmentsRef} />
+        <BorderAnimation pathRef={pathRef} segmentsRef={segmentsRef} glowSegmentsRef={glowSegmentsRef} />
         <div className="relative flex items-center h-full w-full">
           <AttachButton onFileUpload={handleFileUpload} />
           <input
+            ref={inputRef}
             type="text"
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
+            onFocus={handleFocus}
+            onBlur={handleBlur}
             className="flex-1 px-4 py-5 rounded-2xl text-white placeholder:text-gray-400 outline-none bg-transparent"
             placeholder="Ask anything..."
           />

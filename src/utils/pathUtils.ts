@@ -1,7 +1,8 @@
-import { calculateInputDimensions, BORDER_CONFIG } from "../constants";
+import { INPUT_DIMENSIONS, BORDER_CONFIG } from "../constants";
 
 export function createRoundedRectanglePath() {
-  const { width: inputWidth, height: inputHeight } = calculateInputDimensions();
+  const inputWidth = INPUT_DIMENSIONS.width;
+  const inputHeight = INPUT_DIMENSIONS.height;
   const borderOffset = BORDER_CONFIG.offset;
   const cornerRadius = BORDER_CONFIG.cornerRadius;
   const svgWidth = inputWidth + borderOffset * 2;

@@ -6,9 +6,10 @@ import { useGSAP } from "@gsap/react";
 interface BorderAnimationProps {
   pathRef: React.RefObject<SVGPathElement | null>;
   segmentsRef: React.RefObject<(SVGPathElement | null)[]>;
+  glowSegmentsRef: React.RefObject<(SVGPathElement | null)[]>;
 }
 
-export function BorderAnimation({ pathRef, segmentsRef }: BorderAnimationProps) {
+export function BorderAnimation({ pathRef, segmentsRef, glowSegmentsRef }: BorderAnimationProps) {
   const { pathD, svgWidth, svgHeight, borderOffset } = createRoundedRectanglePath();
 
   useGSAP(() => {
@@ -49,6 +50,13 @@ export function BorderAnimation({ pathRef, segmentsRef }: BorderAnimationProps) 
             <feMergeNode in="SourceGraphic" />
           </feMerge>
         </filter>
+        <filter id="glow-strong">
+          <feGaussianBlur stdDeviation="4" result="coloredBlur" />
+          <feMerge>
+            <feMergeNode in="coloredBlur" />
+            <feMergeNode in="SourceGraphic" />
+          </feMerge>
+        </filter>
       </defs>
 
       {/* Hidden reference path to get length */}
@@ -67,6 +75,23 @@ export function BorderAnimation({ pathRef, segmentsRef }: BorderAnimationProps) 
           strokeWidth="3"
           strokeLinecap="round"
           filter="url(#glow)"
+        />
+      ))}
+
+      {/* Render glow segments for focus animation */}
+      {COLORS.map((color, index) => (
+        <path
+          key={`glow-${color}-${index}`}
+          ref={(el) => {
+            glowSegmentsRef.current[index] = el;
+          }}
+          d={pathD}
+          fill="none"
+          stroke={color}
+          strokeWidth="3"
+          strokeLinecap="round"
+          filter="url(#glow-strong)"
+          opacity="0"
         />
       ))}
     </svg>

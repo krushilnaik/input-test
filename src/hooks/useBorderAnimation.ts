@@ -1,4 +1,4 @@
-import { COLORS } from "../constants";
+import { COLORS, INPUT_DIMENSIONS } from "../constants";
 import gsap from "gsap";
 
 interface UseBorderAnimationParams {
@@ -101,8 +101,8 @@ export function useBorderAnimation({
     borderAnimationStartedRef.current = false;
 
     // Reset to initial state
-    const finalWidth = Math.round(384 * 1.3) + 20;
-    const finalHeight = Math.round(56 * 1.3) - 10;
+    const finalWidth = INPUT_DIMENSIONS.width;
+    const finalHeight = INPUT_DIMENSIONS.height;
     const initialHeight = finalHeight * 0.6;
 
     gsap.set(containerRef.current, {
