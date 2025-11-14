@@ -1,7 +1,9 @@
-import { createRouter, RouterProvider } from "@tanstack/react-router";
+import { RouterProvider, createRouter } from "@tanstack/react-router";
+
+import { AnimationProvider } from "@/contexts/AnimationContext";
+import { OverviewProvider } from "@/contexts/OverviewContext";
+
 import { routeTree } from "./routeTree.gen";
-import { AnimationProvider } from "./contexts/AnimationContext";
-import { OverviewProvider } from "./contexts/OverviewContext";
 
 const router = createRouter({ routeTree });
 

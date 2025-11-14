@@ -1,8 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { useAnimationContext } from "../contexts/AnimationContext";
-import { useOverview } from "../contexts/OverviewContext";
-import { Greeting } from "../components/Greeting";
+
+import { Greeting } from "@/components/Greeting";
+import { useAnimationContext } from "@/contexts/AnimationContext";
+import { useOverview } from "@/contexts/OverviewContext";
 
 export const Route = createFileRoute("/")({
   component: CenterPage,

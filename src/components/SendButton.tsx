@@ -1,5 +1,5 @@
-import { useSendButtonAnimation } from "../hooks/useSendButtonAnimation";
-import { SendIcon } from "../atoms/SendIcon";
+import { SendIcon } from "@/atoms/SendIcon";
+import { useSendButtonAnimation } from "@/hooks/useSendButtonAnimation";
 
 interface SendButtonProps {
   inputValue: string;

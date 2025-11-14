@@ -1,5 +1,5 @@
-import { useOverview } from "../contexts/OverviewContext";
-import { Greeting } from "./Greeting";
+import { Greeting } from "@/components/Greeting";
+import { useOverview } from "@/contexts/OverviewContext";
 
 export function OverviewOverlay() {
   const { isOverviewOpen } = useOverview();
@@ -39,4 +39,3 @@ export function OverviewOverlay() {
     </div>
   );
 }
-

@@ -1,13 +1,14 @@
-import { useRef, useState, useCallback, useEffect, useLayoutEffect } from "react";
 import gsap from "gsap";
-import { COLORS, INPUT_DIMENSIONS } from "../constants";
-import { useBorderAnimation } from "../hooks/useBorderAnimation";
-import { useViewTransitionPause } from "../hooks/useViewTransitionPause";
-import { BorderAnimation } from "./BorderAnimation";
-import { AttachButton } from "./AttachButton";
-import { SendButton } from "./SendButton";
-import { FilePills } from "./FilePills";
-import { SuggestionPills } from "./SuggestionPills";
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
+
+import { AttachButton } from "@/components/AttachButton";
+import { BorderAnimation } from "@/components/BorderAnimation";
+import { FilePills } from "@/components/FilePills";
+import { SendButton } from "@/components/SendButton";
+import { SuggestionPills } from "@/components/SuggestionPills";
+import { COLORS, INPUT_DIMENSIONS } from "@/constants";
+import { useBorderAnimation } from "@/hooks/useBorderAnimation";
+import { useViewTransitionPause } from "@/hooks/useViewTransitionPause";
 
 interface AnimatedInputProps {
   onReady?: (controls: { startAnimation: () => void; isAnimating: boolean }) => void;

@@ -1,7 +1,8 @@
-import { COLORS, INPUT_DIMENSIONS, BORDER_CONFIG } from "../constants";
-import { useState, useEffect } from "react";
-import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
+import gsap from "gsap";
+import { useEffect, useState } from "react";
+
+import { BORDER_CONFIG, COLORS, INPUT_DIMENSIONS } from "@/constants";
 
 interface BorderAnimationProps {
   pathRef: React.RefObject<SVGPathElement | null>;

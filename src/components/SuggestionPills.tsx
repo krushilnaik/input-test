@@ -1,13 +1,14 @@
-import { useState } from "react";
 import { useRouterState } from "@tanstack/react-router";
-import { SparkleIcon } from "../atoms/SparkleIcon";
-import { InfoIcon } from "../atoms/InfoIcon";
-import { ChecklistIcon } from "../atoms/ChecklistIcon";
-import { LightbulbIcon } from "../atoms/LightbulbIcon";
-import { SuggestionPillItem } from "./SuggestionPill";
-import type { SuggestionPill } from "./SuggestionPill";
+import { useState } from "react";
 
-const SUGGESTION_PILLS: Array<SuggestionPill & { accentColor: string }> = [
+import { ChecklistIcon } from "@/atoms/ChecklistIcon";
+import { InfoIcon } from "@/atoms/InfoIcon";
+import { LightbulbIcon } from "@/atoms/LightbulbIcon";
+import { SparkleIcon } from "@/atoms/SparkleIcon";
+import { SuggestionPillItem } from "@/components/SuggestionPill";
+import type { SuggestionPill } from "@/components/SuggestionPill";
+
+const SUGGESTION_PILLS: (SuggestionPill & { accentColor: string })[] = [
   {
     id: "suggested",
     label: "Suggested",

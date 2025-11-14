@@ -8,4 +8,3 @@ function BottomPage() {
   // AnimatedInput is rendered in the root route to prevent remounting
   return null;
 }
-

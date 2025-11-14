@@ -1,5 +1,6 @@
-import { COLORS, INPUT_DIMENSIONS } from "../constants";
 import gsap from "gsap";
+
+import { COLORS, INPUT_DIMENSIONS } from "@/constants";
 
 interface UseBorderAnimationParams {
   pathRef: React.RefObject<SVGPathElement | null>;
@@ -19,7 +20,7 @@ export function useBorderAnimation({
 
   const startIntroBorderAnimation = () => {
     if (!pathRef.current) return;
-    
+
     // Cancel any existing border animation
     if (borderAnimationIdRef.current !== null) {
       cancelAnimationFrame(borderAnimationIdRef.current);
@@ -142,7 +143,7 @@ export function useBorderAnimation({
         timelineRef.current = null;
       },
     });
-    
+
     timelineRef.current = timeline;
 
     timeline.to(containerRef.current, {

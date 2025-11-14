@@ -1,9 +1,10 @@
-import { useRef, useEffect, useState } from "react";
-import { createPortal } from "react-dom";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
-import { FolderIcon } from "../atoms/FolderIcon";
-import { UploadIcon } from "../atoms/UploadIcon";
+import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
+
+import { FolderIcon } from "@/atoms/FolderIcon";
+import { UploadIcon } from "@/atoms/UploadIcon";
 
 interface AttachPopoverProps {
   isOpen: boolean;

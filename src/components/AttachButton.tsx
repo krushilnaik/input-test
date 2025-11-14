@@ -1,6 +1,7 @@
-import { useState, useRef } from "react";
-import { AttachPopover } from "./AttachPopover";
-import { AttachIcon } from "../atoms/AttachIcon";
+import { useRef, useState } from "react";
+
+import { AttachIcon } from "@/atoms/AttachIcon";
+import { AttachPopover } from "@/components/AttachPopover";
 
 interface AttachButtonProps {
   onFileUpload?: (file: File) => void;

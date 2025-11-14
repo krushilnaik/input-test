@@ -1,6 +1,6 @@
-import { useRef } from "react";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
+import { useRef } from "react";
 
 export function useSendButtonAnimation(inputValue: string) {
   const sendButtonRef = useRef<HTMLButtonElement>(null);
@@ -60,4 +60,3 @@ export function useSendButtonAnimation(inputValue: string) {
 
   return sendButtonRef;
 }
-

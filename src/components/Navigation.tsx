@@ -1,12 +1,13 @@
+import { useRouterState } from "@tanstack/react-router";
 import { useCallback } from "react";
 import { flushSync } from "react-dom";
-import { useRouterState } from "@tanstack/react-router";
-import { useOverview } from "../contexts/OverviewContext";
-import { CenterIcon } from "../atoms/CenterIcon";
-import { BottomIcon } from "../atoms/BottomIcon";
-import { OverviewIcon } from "../atoms/OverviewIcon";
-import { EmptyIcon } from "../atoms/EmptyIcon";
-import { TransitionLink } from "./TransitionLink";
+
+import { BottomIcon } from "@/atoms/BottomIcon";
+import { CenterIcon } from "@/atoms/CenterIcon";
+import { EmptyIcon } from "@/atoms/EmptyIcon";
+import { OverviewIcon } from "@/atoms/OverviewIcon";
+import { TransitionLink } from "@/components/TransitionLink";
+import { useOverview } from "@/contexts/OverviewContext";
 
 const SESSION_STORAGE_KEY = "text-shimmer-animated";
 

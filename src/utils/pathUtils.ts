@@ -1,4 +1,4 @@
-import { INPUT_DIMENSIONS, BORDER_CONFIG } from "../constants";
+import { BORDER_CONFIG, INPUT_DIMENSIONS } from "@/constants";
 
 export function createRoundedRectanglePath() {
   const inputWidth = INPUT_DIMENSIONS.width;
@@ -32,4 +32,3 @@ export function createRoundedRectanglePath() {
     borderOffset,
   };
 }
-

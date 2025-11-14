@@ -1,9 +1,10 @@
-import { createRootRoute, Outlet, useRouterState } from "@tanstack/react-router";
-import { Navigation } from "../components/Navigation";
-import { AnimatedInput } from "../components/AnimatedInput";
-import { OverviewOverlay } from "../components/OverviewOverlay";
-import { useAnimationContext } from "../contexts/AnimationContext";
-import { useOverview } from "../contexts/OverviewContext";
+import { Outlet, createRootRoute, useRouterState } from "@tanstack/react-router";
+
+import { AnimatedInput } from "@/components/AnimatedInput";
+import { Navigation } from "@/components/Navigation";
+import { OverviewOverlay } from "@/components/OverviewOverlay";
+import { useAnimationContext } from "@/contexts/AnimationContext";
+import { useOverview } from "@/contexts/OverviewContext";
 
 export const Route = createRootRoute({
   component: RootComponent,
