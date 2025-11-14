@@ -119,12 +119,11 @@ export function useBorderAnimation({
     borderAnimationStartedRef.current = false;
 
     // Reset to initial state
-    const finalWidth = INPUT_DIMENSIONS.width;
     const finalHeight = INPUT_DIMENSIONS.height;
     const initialHeight = finalHeight * 0.6;
 
     gsap.set(containerRef.current, {
-      width: finalWidth,
+      width: "100%",
       height: initialHeight,
       opacity: 0,
       y: 60,
@@ -138,7 +137,7 @@ export function useBorderAnimation({
       onComplete: () => {
         setIsAnimating(false);
         if (containerRef.current) {
-          gsap.set(containerRef.current, { width: finalWidth, height: finalHeight, opacity: 1, y: 0 });
+          gsap.set(containerRef.current, { width: "100%", height: finalHeight, opacity: 1, y: 0 });
         }
         timelineRef.current = null;
       },

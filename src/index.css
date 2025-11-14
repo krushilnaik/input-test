@@ -1,30 +1,202 @@
 @import "tailwindcss";
 
-
 /* liquid glass */
 .glass {
-	position: relative;
-	z-index: 1;
-	filter: drop-shadow(-8px -10px 46px #0000005f);
-	backdrop-filter: brightness(1.1) blur(2px) url(#displacementFilter);
+  position: relative;
+  z-index: 1;
+  filter: drop-shadow(-8px -10px 46px #0000005f);
+  backdrop-filter: brightness(1.1) blur(2px) url(#displacementFilter);
 
-	& > * {
-		z-index: 10;
-	}
+  & > * {
+    z-index: 10;
+  }
 }
 
 .glass::before {
-	content: "";
-	position: absolute;
-	inset: 0;
-	z-index: -1;
-	overflow: hidden;
-	border-radius: inherit;
-	-webkit-box-shadow:
-		inset 2px 2px 0px -2px rgba(255, 255, 255, 0.25),
-		inset 0 0 3px 1px rgba(255, 255, 255, 0.25);
-	box-shadow:
-		inset 6px 6px 0px -6px rgba(255, 255, 255, 0.25),
-		inset -6px -6px 0px -6px rgba(255, 255, 255, 0.25),
-		inset 0 0 4px 1px rgba(255, 255, 255, 0.25);
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  border-radius: inherit;
+  -webkit-box-shadow:
+    inset 2px 2px 0px -2px rgba(255, 255, 255, 0.25),
+    inset 0 0 3px 1px rgba(255, 255, 255, 0.25);
+  box-shadow:
+    inset 6px 6px 0px -6px rgba(255, 255, 255, 0.25),
+    inset -6px -6px 0px -6px rgba(255, 255, 255, 0.25),
+    inset 0 0 4px 1px rgba(255, 255, 255, 0.25);
+}
+
+/* View Transition API styles */
+@supports (view-transition-name: none) {
+  .animated-input-container {
+    view-transition-name: animated-input;
+  }
+
+  /* Exclude animated SVG elements from view transition snapshot
+	   This prevents GSAP animations from being reset during transitions.
+	   The SVG will still move with the container, but won't be captured in the snapshot. */
+  .animated-input-container svg {
+    view-transition-name: none;
+  }
+
+  .greeting-text {
+    view-transition-name: greeting-text;
+  }
+
+  ::view-transition-old(animated-input),
+  ::view-transition-new(animated-input) {
+    animation-duration: 0.5s;
+    animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  ::view-transition-old(greeting-text),
+  ::view-transition-new(greeting-text) {
+    animation-duration: 0.6s;
+    animation-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+}
+/* Pill entrance animation */
+@keyframes pill-entrance {
+  0% {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-pill-entrance {
+  animation: pill-entrance 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation-fill-mode: both;
+}
+
+/* Shimmer in animation - diagonal reveal with smooth fade */
+@keyframes shimmer-in {
+  0% {
+    mask-position: 150% 150%;
+    opacity: 0;
+    filter: brightness(0.2);
+  }
+  15% {
+    opacity: 0.2;
+    filter: brightness(0.4);
+  }
+  30% {
+    opacity: 0.4;
+    filter: brightness(0.6);
+  }
+  50% {
+    opacity: 0.65;
+    filter: brightness(0.8);
+  }
+  70% {
+    opacity: 0.85;
+    filter: brightness(0.95);
+  }
+  90% {
+    mask-position: -150% -50%;
+    opacity: 0.95;
+    filter: brightness(0.98);
+  }
+  100% {
+    mask-image: none;
+    -webkit-mask-image: none;
+    opacity: 1;
+    filter: brightness(1);
+  }
+}
+
+@keyframes shimmer-in-text {
+  0% {
+    mask-position: 150% 150%;
+    opacity: 0;
+    filter: brightness(0.2);
+  }
+  15% {
+    opacity: 0.2;
+    filter: brightness(0.4);
+  }
+  30% {
+    opacity: 0.4;
+    filter: brightness(0.6);
+  }
+  50% {
+    opacity: 0.65;
+    filter: brightness(0.8);
+  }
+  70% {
+    opacity: 0.85;
+    filter: brightness(0.95);
+  }
+  90% {
+    mask-position: -150% -50%;
+    opacity: 0.95;
+    filter: brightness(0.98);
+  }
+  100% {
+    mask-image: none;
+    -webkit-mask-image: none;
+    opacity: 1;
+    filter: brightness(1);
+  }
+}
+
+.animate-shimmer-in {
+  animation: shimmer-in 2.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+  mask-image: linear-gradient(
+    135deg,
+    transparent 0%,
+    transparent 25%,
+    rgba(0, 0, 0, 0.4) 35%,
+    black 45%,
+    black 55%,
+    rgba(0, 0, 0, 0.4) 65%,
+    transparent 75%,
+    transparent 100%
+  );
+  mask-size: 300% 300%;
+  -webkit-mask-image: linear-gradient(
+    135deg,
+    transparent 0%,
+    transparent 25%,
+    rgba(0, 0, 0, 0.4) 35%,
+    black 45%,
+    black 55%,
+    rgba(0, 0, 0, 0.4) 65%,
+    transparent 75%,
+    transparent 100%
+  );
+  -webkit-mask-size: 300% 300%;
+}
+
+.animate-shimmer-in-text {
+  animation: shimmer-in-text 2.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+  mask-image: linear-gradient(
+    135deg,
+    transparent 0%,
+    transparent 25%,
+    rgba(0, 0, 0, 0.4) 35%,
+    black 45%,
+    black 55%,
+    rgba(0, 0, 0, 0.4) 65%,
+    transparent 75%,
+    transparent 100%
+  );
+  mask-size: 300% 300%;
+  -webkit-mask-image: linear-gradient(
+    135deg,
+    transparent 0%,
+    transparent 25%,
+    rgba(0, 0, 0, 0.4) 35%,
+    black 45%,
+    black 55%,
+    rgba(0, 0, 0, 0.4) 65%,
+    transparent 75%,
+    transparent 100%
+  );
+  -webkit-mask-size: 300% 300%;
 }

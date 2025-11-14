@@ -2,6 +2,7 @@ import { useRef, useState, useCallback, useEffect, useLayoutEffect } from "react
 import gsap from "gsap";
 import { COLORS, INPUT_DIMENSIONS } from "../constants";
 import { useBorderAnimation } from "../hooks/useBorderAnimation";
+import { useViewTransitionPause } from "../hooks/useViewTransitionPause";
 import { BorderAnimation } from "./BorderAnimation";
 import { AttachButton } from "./AttachButton";
 import { SendButton } from "./SendButton";
@@ -10,9 +11,10 @@ import { SuggestionPills } from "./SuggestionPills";
 
 interface AnimatedInputProps {
   onReady?: (controls: { startAnimation: () => void; isAnimating: boolean }) => void;
+  shouldStartAnimation?: boolean;
 }
 
-export function AnimatedInput({ onReady }: AnimatedInputProps) {
+export function AnimatedInput({ onReady, shouldStartAnimation = true }: AnimatedInputProps) {
   const pathRef = useRef<SVGPathElement>(null);
   const segmentsRef = useRef<(SVGPathElement | null)[]>([]);
   const glowSegmentsRef = useRef<(SVGPathElement | null)[]>([]);
@@ -25,6 +27,9 @@ export function AnimatedInput({ onReady }: AnimatedInputProps) {
   const [files, setFiles] = useState<File[]>([]);
   const [shouldAnimatePills, setShouldAnimatePills] = useState(false);
   const hasStartedRef = useRef(false);
+
+  // Preserve GSAP animations during view transitions
+  useViewTransitionPause();
 
   const handleFileUpload = useCallback((file: File) => {
     console.log("[AnimatedInput] handleFileUpload called with file:", file.name, file.size);
@@ -113,7 +118,7 @@ export function AnimatedInput({ onReady }: AnimatedInputProps) {
         });
         // Fade in smoothly
         gsap.to(segment, {
-          opacity: 0.4,
+          opacity: 0.8,
           duration: 0.3,
           ease: "power2.out",
         });
@@ -174,12 +179,11 @@ export function AnimatedInput({ onReady }: AnimatedInputProps) {
   // Set initial state immediately to prevent flash
   useLayoutEffect(() => {
     if (containerRef.current) {
-      const finalWidth = INPUT_DIMENSIONS.width;
       const finalHeight = INPUT_DIMENSIONS.height;
       const initialHeight = finalHeight * 0.6;
 
       gsap.set(containerRef.current, {
-        width: finalWidth,
+        width: "100%",
         height: initialHeight,
         opacity: 0,
         y: 60,
@@ -187,9 +191,9 @@ export function AnimatedInput({ onReady }: AnimatedInputProps) {
     }
   }, []);
 
-  // Start animation automatically on mount (only once)
+  // Start animation when shouldStartAnimation becomes true (only once)
   useEffect(() => {
-    if (hasStartedRef.current) return;
+    if (hasStartedRef.current || !shouldStartAnimation) return;
 
     // Small delay to ensure DOM is ready
     const timer = setTimeout(() => {
@@ -199,7 +203,7 @@ export function AnimatedInput({ onReady }: AnimatedInputProps) {
     }, 50);
 
     return () => clearTimeout(timer);
-  }, [startAnimation, resetSegments, setIsAnimating]);
+  }, [shouldStartAnimation, startAnimation, resetSegments, setIsAnimating]);
 
   useEffect(() => {
     onReady?.({ startAnimation: handleStartAnimation, isAnimating });
@@ -214,23 +218,21 @@ export function AnimatedInput({ onReady }: AnimatedInputProps) {
     };
   }, []);
 
-  const finalWidth = INPUT_DIMENSIONS.width;
   const finalHeight = INPUT_DIMENSIONS.height;
   const initialHeight = finalHeight * 0.6;
 
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col animated-input-container w-full">
       <div
         ref={containerRef}
-        className="relative glass rounded-2xl overflow-hidden bg-black/20"
+        className="relative glass rounded-2xl overflow-hidden bg-black/20 w-full"
         style={{
-          width: finalWidth,
           height: initialHeight,
           opacity: 0,
           transform: "translateY(60px)",
         }}
       >
-        <BorderAnimation pathRef={pathRef} segmentsRef={segmentsRef} glowSegmentsRef={glowSegmentsRef} />
+        <BorderAnimation pathRef={pathRef} segmentsRef={segmentsRef} glowSegmentsRef={glowSegmentsRef} containerRef={containerRef} />
         <div className="relative flex items-center h-full w-full">
           <AttachButton onFileUpload={handleFileUpload} />
           <input

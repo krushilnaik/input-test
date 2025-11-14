@@ -1,5 +1,5 @@
-import { COLORS } from "../constants";
-import { createRoundedRectanglePath } from "../utils/pathUtils";
+import { COLORS, INPUT_DIMENSIONS, BORDER_CONFIG } from "../constants";
+import { useState, useEffect } from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 
@@ -7,10 +7,72 @@ interface BorderAnimationProps {
   pathRef: React.RefObject<SVGPathElement | null>;
   segmentsRef: React.RefObject<(SVGPathElement | null)[]>;
   glowSegmentsRef: React.RefObject<(SVGPathElement | null)[]>;
+  containerRef: React.RefObject<HTMLDivElement | null>;
 }
 
-export function BorderAnimation({ pathRef, segmentsRef, glowSegmentsRef }: BorderAnimationProps) {
-  const { pathD, svgWidth, svgHeight, borderOffset } = createRoundedRectanglePath();
+function createRoundedRectanglePath(containerWidth: number) {
+  const inputWidth = containerWidth;
+  const inputHeight = INPUT_DIMENSIONS.height;
+  const borderOffset = BORDER_CONFIG.offset;
+  const cornerRadius = BORDER_CONFIG.cornerRadius;
+  const svgWidth = inputWidth + borderOffset * 2;
+  const svgHeight = inputHeight + borderOffset * 2;
+
+  const pathXStart = borderOffset + cornerRadius;
+  const pathXEnd = inputWidth + borderOffset - cornerRadius;
+  const pathYTop = borderOffset + cornerRadius;
+  const pathYBottom = inputHeight + borderOffset - cornerRadius;
+
+  const pathD = `M ${pathXStart} ${borderOffset} L ${pathXEnd} ${borderOffset} Q ${
+    svgWidth - borderOffset
+  } ${borderOffset} ${svgWidth - borderOffset} ${pathYTop} L ${svgWidth - borderOffset} ${pathYBottom} Q ${
+    svgWidth - borderOffset
+  } ${svgHeight - borderOffset} ${pathXEnd} ${svgHeight - borderOffset} L ${pathXStart} ${
+    svgHeight - borderOffset
+  } Q ${borderOffset} ${
+    svgHeight - borderOffset
+  } ${borderOffset} ${pathYBottom} L ${borderOffset} ${pathYTop} Q ${borderOffset} ${borderOffset} ${pathXStart} ${borderOffset}`;
+
+  return {
+    pathD,
+    svgWidth,
+    svgHeight,
+    inputWidth,
+    inputHeight,
+    borderOffset,
+  };
+}
+
+export function BorderAnimation({ pathRef, segmentsRef, glowSegmentsRef, containerRef }: BorderAnimationProps) {
+  const [pathData, setPathData] = useState(() => {
+    // Initial width fallback
+    const initialWidth = containerRef.current?.offsetWidth || INPUT_DIMENSIONS.width;
+    return createRoundedRectanglePath(initialWidth);
+  });
+
+  useEffect(() => {
+    if (!containerRef.current) return;
+
+    const updatePath = () => {
+      const width = containerRef.current?.offsetWidth || INPUT_DIMENSIONS.width;
+      if (width > 0) {
+        setPathData(createRoundedRectanglePath(width));
+      }
+    };
+
+    // Initial update
+    updatePath();
+
+    // Use ResizeObserver to watch for container size changes
+    const resizeObserver = new ResizeObserver(updatePath);
+    resizeObserver.observe(containerRef.current);
+
+    return () => {
+      resizeObserver.disconnect();
+    };
+  }, [containerRef]);
+
+  const { pathD, svgWidth, svgHeight, borderOffset } = pathData;
 
   useGSAP(() => {
     if (pathRef.current) {
@@ -30,7 +92,7 @@ export function BorderAnimation({ pathRef, segmentsRef, glowSegmentsRef }: Borde
         }
       });
     }
-  }, []);
+  }, [pathD]);
 
   return (
     <svg
@@ -51,7 +113,7 @@ export function BorderAnimation({ pathRef, segmentsRef, glowSegmentsRef }: Borde
           </feMerge>
         </filter>
         <filter id="glow-strong">
-          <feGaussianBlur stdDeviation="4" result="coloredBlur" />
+          <feGaussianBlur stdDeviation="6" result="coloredBlur" />
           <feMerge>
             <feMergeNode in="coloredBlur" />
             <feMergeNode in="SourceGraphic" />
@@ -88,7 +150,7 @@ export function BorderAnimation({ pathRef, segmentsRef, glowSegmentsRef }: Borde
           d={pathD}
           fill="none"
           stroke={color}
-          strokeWidth="3"
+          strokeWidth="4"
           strokeLinecap="round"
           filter="url(#glow-strong)"
           opacity="0"
