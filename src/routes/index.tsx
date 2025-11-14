@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { useAnimationContext } from "../contexts/AnimationContext";
+import { useOverview } from "../contexts/OverviewContext";
 import { Greeting } from "../components/Greeting";
 
 export const Route = createFileRoute("/")({
@@ -9,6 +10,7 @@ export const Route = createFileRoute("/")({
 
 function CenterPage() {
   const { onTextAnimationComplete } = useAnimationContext();
+  const { isOverviewOpen } = useOverview();
   const [hasAnimated, setHasAnimated] = useState(() => {
     // Check sessionStorage to persist across remounts in StrictMode
     return sessionStorage.getItem("text-shimmer-animated") === "true";
@@ -27,8 +29,8 @@ function CenterPage() {
     <div className="w-full mb-8">
       {/* Stars Graphic */}
 
-      {/* Text Content */}
-      <Greeting hasAnimated={hasAnimated} setHasAnimated={setHasAnimated} />
+      {/* Text Content - conditionally render to avoid duplicate view-transition-names */}
+      {!isOverviewOpen && <Greeting hasAnimated={hasAnimated} setHasAnimated={setHasAnimated} />}
       <p className={`text-white text-2xl leading-relaxed ${hasAnimated ? "" : "animate-shimmer-in-text"}`}>
         {subtextText}
       </p>
