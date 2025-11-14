@@ -9,16 +9,10 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as OverviewRouteImport } from './routes/overview'
 import { Route as EmptyRouteImport } from './routes/empty'
 import { Route as BottomRouteImport } from './routes/bottom'
 import { Route as IndexRouteImport } from './routes/index'
 
-const OverviewRoute = OverviewRouteImport.update({
-  id: '/overview',
-  path: '/overview',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const EmptyRoute = EmptyRouteImport.update({
   id: '/empty',
   path: '/empty',
@@ -39,45 +33,34 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/bottom': typeof BottomRoute
   '/empty': typeof EmptyRoute
-  '/overview': typeof OverviewRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/bottom': typeof BottomRoute
   '/empty': typeof EmptyRoute
-  '/overview': typeof OverviewRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/bottom': typeof BottomRoute
   '/empty': typeof EmptyRoute
-  '/overview': typeof OverviewRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/bottom' | '/empty' | '/overview'
+  fullPaths: '/' | '/bottom' | '/empty'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/bottom' | '/empty' | '/overview'
-  id: '__root__' | '/' | '/bottom' | '/empty' | '/overview'
+  to: '/' | '/bottom' | '/empty'
+  id: '__root__' | '/' | '/bottom' | '/empty'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   BottomRoute: typeof BottomRoute
   EmptyRoute: typeof EmptyRoute
-  OverviewRoute: typeof OverviewRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/overview': {
-      id: '/overview'
-      path: '/overview'
-      fullPath: '/overview'
-      preLoaderRoute: typeof OverviewRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/empty': {
       id: '/empty'
       path: '/empty'
@@ -106,7 +89,6 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   BottomRoute: BottomRoute,
   EmptyRoute: EmptyRoute,
-  OverviewRoute: OverviewRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

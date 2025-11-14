@@ -1,47 +1,14 @@
 import { useCallback } from "react";
 import { flushSync } from "react-dom";
-import { useRouterState, useNavigate } from "@tanstack/react-router";
+import { useRouterState } from "@tanstack/react-router";
 import { useOverview } from "../contexts/OverviewContext";
 import { CenterIcon } from "../atoms/CenterIcon";
 import { BottomIcon } from "../atoms/BottomIcon";
 import { OverviewIcon } from "../atoms/OverviewIcon";
 import { EmptyIcon } from "../atoms/EmptyIcon";
+import { TransitionLink } from "./TransitionLink";
 
 const SESSION_STORAGE_KEY = "text-shimmer-animated";
-
-function TransitionLink({
-  to,
-  children,
-  className,
-  title,
-}: {
-  to: string;
-  children: React.ReactNode;
-  className?: string;
-  title?: string;
-}) {
-  const navigate = useNavigate();
-
-  const handleClick = useCallback(
-    (e: React.MouseEvent<HTMLAnchorElement>) => {
-      e.preventDefault();
-      if (document.startViewTransition) {
-        document.startViewTransition(() => {
-          navigate({ to });
-        });
-      } else {
-        navigate({ to });
-      }
-    },
-    [navigate, to]
-  );
-
-  return (
-    <a href={to} onClick={handleClick} className={className} title={title}>
-      {children}
-    </a>
-  );
-}
 
 function OverviewToggleButton({
   children,
