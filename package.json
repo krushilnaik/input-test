@@ -14,14 +14,18 @@
     "@tanstack/react-router": "^1.134.13",
     "gsap": "^3.13.0",
     "react": "^19.1.1",
-    "react-dom": "^19.1.1"
+    "react-directive": "^2.0.0",
+    "react-dom": "^19.1.1",
+    "react-markdown": "^10.1.0",
+    "remark-gfm": "^4.0.1",
+    "unified": "^11.0.5"
   },
   "devDependencies": {
     "@eslint/js": "^9.36.0",
     "@tailwindcss/postcss": "^4.1.16",
     "@tanstack/router-plugin": "^1.134.13",
     "@tanstack/router-vite-plugin": "^1.134.13",
-    "@types/node": "^24.6.0",
+    "@types/node": "^24.10.1",
     "@types/react": "^19.1.16",
     "@types/react-dom": "^19.1.9",
     "@vitejs/plugin-react": "^5.0.4",
