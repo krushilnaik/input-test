@@ -77,7 +77,7 @@ export function Navigation() {
           </TransitionLink>
           <OverviewToggleButton
             className={`p-3 rounded-full transition-colors ${
-              isOverviewOpen ? "bg-blue-600 text-white" : "bg-gray-800/50 text-gray-300 hover:bg-gray-700/50"
+              isOverviewOpen ? "bg-green-600 text-white" : "bg-gray-800/50 text-gray-300 hover:bg-gray-700/50"
             }`}
             title="Overview"
           >
@@ -93,13 +93,15 @@ export function Navigation() {
             <EmptyIcon />
           </TransitionLink>
         </div>
-        <button
-          onClick={handleClearTracking}
-          className="px-4 py-2 rounded-full bg-orange-600 text-white hover:bg-orange-700 transition-colors text-sm whitespace-nowrap"
-          title="Clear session storage to simulate login"
-        >
-          Simulate Login
-        </button>
+        <div>
+          <button
+            onClick={handleClearTracking}
+            className="px-4 py-2 rounded-full bg-orange-600 text-white hover:bg-orange-700 transition-colors text-sm whitespace-nowrap"
+            title="Clear session storage to simulate login"
+          >
+            Simulate Login
+          </button>
+        </div>
       </nav>
     </header>
   );
