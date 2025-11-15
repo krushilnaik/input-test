@@ -22,7 +22,7 @@ function RootComponent() {
     <main className="flex flex-col min-h-screen w-full bg-gray-900 text-white">
       <Navigation />
       <div
-        className="h-screen pt-20 flex"
+        className="h-screen pt-20 flex px-4"
         style={{ opacity: isOverviewOpen ? 0 : 1, pointerEvents: isOverviewOpen ? "none" : "auto" }}
       >
         {showInput ? (
