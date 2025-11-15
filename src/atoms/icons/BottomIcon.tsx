@@ -1,31 +1,19 @@
 interface BottomIconProps {
-  className?: string;
+  size?: number;
+  color?: string;
 }
 
-export function BottomIcon({ className }: BottomIconProps) {
+export function BottomIcon({ size = 20, color = "currentColor" }: BottomIconProps) {
   return (
-    <svg
-      width="20"
-      height="20"
-      viewBox="0 0 20 20"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      className={className}
-    >
+    <svg width={size} height={size} viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path
         d="M10 4L10 14M10 14L6 10M10 14L14 10"
-        stroke="currentColor"
+        stroke={color}
         strokeWidth="1.5"
         strokeLinecap="round"
         strokeLinejoin="round"
       />
-      <path
-        d="M4 16H16"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-      />
+      <path d="M4 16H16" stroke={color} strokeWidth="2" strokeLinecap="round" />
     </svg>
   );
 }
-

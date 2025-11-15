@@ -162,7 +162,7 @@ export function AttachPopover({ isOpen, onClose, onUseExisting, onUploadNew, but
           onMouseDown={(e) => e.stopPropagation()}
           className="w-full px-4 py-2.5 text-left text-white hover:bg-gray-700 transition-colors text-sm flex items-center gap-3"
         >
-          <FolderIcon className="shrink-0" />
+          <FolderIcon size={16} />
           <span>Use existing file</span>
         </button>
         <button
@@ -179,7 +179,7 @@ export function AttachPopover({ isOpen, onClose, onUseExisting, onUploadNew, but
           type="button"
           className="w-full px-4 py-2.5 text-left text-white hover:bg-gray-700 transition-colors text-sm flex items-center gap-3"
         >
-          <UploadIcon className="shrink-0" />
+          <UploadIcon size={16} />
           <span>Upload new file</span>
         </button>
       </div>

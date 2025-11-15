@@ -12,25 +12,25 @@ const SUGGESTION_PILLS: (SuggestionPill & { accentColor: string })[] = [
   {
     id: "suggested",
     label: "Suggested",
-    icon: <SparkleIcon className="w-3.5 h-3.5" />,
+    icon: <SparkleIcon size={14} />,
     accentColor: "#FB923C", // orange-400
   },
   {
     id: "needs-attention",
     label: "Needs Attention",
-    icon: <InfoIcon className="w-3.5 h-3.5" />,
+    icon: <InfoIcon size={14} />,
     accentColor: "#FACC15", // yellow-400
   },
   {
     id: "deliverables",
     label: "Deliverables",
-    icon: <ChecklistIcon className="w-3.5 h-3.5" />,
+    icon: <ChecklistIcon size={14} />,
     accentColor: "#22D3EE", // cyan-400
   },
   {
     id: "opportunities",
     label: "Opportunities",
-    icon: <LightbulbIcon className="w-3.5 h-3.5" />,
+    icon: <LightbulbIcon size={14} />,
     accentColor: "#4ADE80", // green-400
   },
 ];

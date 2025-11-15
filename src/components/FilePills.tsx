@@ -86,14 +86,14 @@ export function FilePills({ files, onRemove }: FilePillsProps) {
             }}
             className="glass rounded-full px-4 py-2 bg-black/20 text-white text-sm flex items-center gap-2"
           >
-            <FileIcon className="shrink-0" />
+            <FileIcon size={14} />
             <span className="max-w-[200px] truncate">{file.name}</span>
             <button
               onClick={() => onRemove(file)}
               className="shrink-0 hover:opacity-70 transition-opacity ml-1"
               aria-label={`Remove ${file.name}`}
             >
-              <CloseIcon />
+              <CloseIcon size={14} />
             </button>
           </div>
         );
