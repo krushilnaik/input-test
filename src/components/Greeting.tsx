@@ -1,10 +1,10 @@
 interface Props {
   hasAnimated: boolean;
   setHasAnimated: (value: boolean) => void;
+  greetingText?: string;
 }
 
-export function Greeting({ hasAnimated, setHasAnimated }: Props) {
-  const greetingText = "Good evening, Krushil.";
+export function Greeting({ hasAnimated, setHasAnimated, greetingText }: Props) {
   return (
     <div className="space-y-3 font-light greeting-text flex gap-2">
       <span>stars</span>

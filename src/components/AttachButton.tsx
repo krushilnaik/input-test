@@ -1,6 +1,6 @@
 import { useRef, useState } from "react";
 
-import { AttachIcon } from "@/atoms/AttachIcon";
+import { AttachIcon } from "@/atoms/icons/AttachIcon";
 import { AttachPopover } from "@/components/AttachPopover";
 
 interface AttachButtonProps {

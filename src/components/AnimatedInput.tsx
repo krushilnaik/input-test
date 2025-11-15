@@ -1,5 +1,5 @@
 import gsap from "gsap";
-import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 
 import { AttachButton } from "@/components/AttachButton";
 import { BorderAnimation } from "@/components/BorderAnimation";
@@ -9,13 +9,16 @@ import { SuggestionPills } from "@/components/SuggestionPills";
 import { COLORS, INPUT_DIMENSIONS } from "@/constants";
 import { useBorderAnimation } from "@/hooks/useBorderAnimation";
 import { useViewTransitionPause } from "@/hooks/useViewTransitionPause";
+import { useAnimationContext } from "@/contexts/AnimationContext";
+import { useRouterState } from "@tanstack/react-router";
 
 interface AnimatedInputProps {
   onReady?: (controls: { startAnimation: () => void; isAnimating: boolean }) => void;
-  shouldStartAnimation?: boolean;
+  // shouldStartAnimation?: boolean;
 }
 
-export function AnimatedInput({ onReady, shouldStartAnimation = true }: AnimatedInputProps) {
+export function AnimatedInput({ onReady }: AnimatedInputProps) {
+  const router = useRouterState();
   const pathRef = useRef<SVGPathElement>(null);
   const segmentsRef = useRef<(SVGPathElement | null)[]>([]);
   const glowSegmentsRef = useRef<(SVGPathElement | null)[]>([]);
@@ -28,9 +31,14 @@ export function AnimatedInput({ onReady, shouldStartAnimation = true }: Animated
   const [files, setFiles] = useState<File[]>([]);
   const [shouldAnimatePills, setShouldAnimatePills] = useState(false);
   const hasStartedRef = useRef(false);
+  const { textAnimationComplete } = useAnimationContext();
 
   // Preserve GSAP animations during view transitions
   useViewTransitionPause();
+
+  const shouldStartAnimation = useMemo(() => {
+    return textAnimationComplete || router.location.pathname !== "/";
+  }, [router.location.pathname, textAnimationComplete]);
 
   const handleFileUpload = useCallback((file: File) => {
     console.log("[AnimatedInput] handleFileUpload called with file:", file.name, file.size);
@@ -223,7 +231,7 @@ export function AnimatedInput({ onReady, shouldStartAnimation = true }: Animated
   const initialHeight = finalHeight * 0.6;
 
   return (
-    <div className="flex flex-col animated-input-container w-full">
+    <div className="flex flex-col animated-input-container w-full max-w-5xl mx-auto">
       <div
         ref={containerRef}
         className="relative glass rounded-2xl overflow-hidden bg-black/20 w-full"
@@ -233,7 +241,12 @@ export function AnimatedInput({ onReady, shouldStartAnimation = true }: Animated
           transform: "translateY(60px)",
         }}
       >
-        <BorderAnimation pathRef={pathRef} segmentsRef={segmentsRef} glowSegmentsRef={glowSegmentsRef} containerRef={containerRef} />
+        <BorderAnimation
+          pathRef={pathRef}
+          segmentsRef={segmentsRef}
+          glowSegmentsRef={glowSegmentsRef}
+          containerRef={containerRef}
+        />
         <div className="relative flex items-center h-full w-full">
           <AttachButton onFileUpload={handleFileUpload} />
           <input

@@ -1,8 +1,8 @@
 import gsap from "gsap";
 import { useEffect, useRef } from "react";
 
-import { CloseIcon } from "@/atoms/CloseIcon";
-import { FileIcon } from "@/atoms/FileIcon";
+import { CloseIcon } from "@/atoms/icons/CloseIcon";
+import { FileIcon } from "@/atoms/icons/FileIcon";
 
 interface FilePillsProps {
   files: File[];

@@ -3,8 +3,8 @@ import gsap from "gsap";
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 
-import { FolderIcon } from "@/atoms/FolderIcon";
-import { UploadIcon } from "@/atoms/UploadIcon";
+import { FolderIcon } from "@/atoms/icons/FolderIcon";
+import { UploadIcon } from "@/atoms/icons/UploadIcon";
 
 interface AttachPopoverProps {
   isOpen: boolean;

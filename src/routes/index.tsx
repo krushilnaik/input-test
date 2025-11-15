@@ -31,7 +31,9 @@ function CenterPage() {
       {/* Stars Graphic */}
 
       {/* Text Content - conditionally render to avoid duplicate view-transition-names */}
-      {!isOverviewOpen && <Greeting hasAnimated={hasAnimated} setHasAnimated={setHasAnimated} />}
+      {!isOverviewOpen && (
+        <Greeting greetingText="Good evening, Krushil." hasAnimated={hasAnimated} setHasAnimated={setHasAnimated} />
+      )}
       <p className={`text-white text-2xl leading-relaxed ${hasAnimated ? "" : "animate-shimmer-in-text"}`}>
         {subtextText}
       </p>

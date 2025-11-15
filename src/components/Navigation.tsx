@@ -2,12 +2,14 @@ import { useRouterState } from "@tanstack/react-router";
 import { useCallback } from "react";
 import { flushSync } from "react-dom";
 
-import { BottomIcon } from "@/atoms/BottomIcon";
-import { CenterIcon } from "@/atoms/CenterIcon";
-import { EmptyIcon } from "@/atoms/EmptyIcon";
-import { OverviewIcon } from "@/atoms/OverviewIcon";
+import { BottomIcon } from "@/atoms/icons/BottomIcon";
+import { CenterIcon } from "@/atoms/icons/CenterIcon";
+import { EmptyIcon } from "@/atoms/icons/EmptyIcon";
+import { OverviewIcon } from "@/atoms/icons/OverviewIcon";
 import { TransitionLink } from "@/components/TransitionLink";
 import { useOverview } from "@/contexts/OverviewContext";
+import { HEADER_HEIGHT, PAGE_PADDING_X, PAGE_PADDING_Y } from "@/constants/sizes";
+import { useStore } from "@/stores/sidebar";
 
 const SESSION_STORAGE_KEY = "text-shimmer-animated";
 
@@ -46,6 +48,7 @@ export function Navigation() {
   const router = useRouterState();
   const pathname = router.location.pathname;
   const { isOverviewOpen } = useOverview();
+  const { count, setCount } = useStore((state) => state);
 
   const handleClearTracking = useCallback(() => {
     if (typeof window !== "undefined") {
@@ -53,10 +56,17 @@ export function Navigation() {
     }
   }, []);
 
+  const toggleActionPanel = useCallback(() => {
+    setCount(count === "0rem" ? "24rem" : "0rem");
+  }, [setCount, count]);
+
   return (
-    <header className="w-full px-16 py-4 fixed z-60">
-      <nav className="glass rounded-full px-2 py-2 flex gap-2 items-center justify-between w-full">
-        <div className="flex gap-2">
+    <div className="w-full fixed z-60" style={{ padding: `${PAGE_PADDING_Y} ${PAGE_PADDING_X}` }}>
+      <header
+        style={{ height: HEADER_HEIGHT }}
+        className="glass rounded-full p-2 flex gap-2 items-center justify-between w-full"
+      >
+        <nav className="flex gap-2">
           <TransitionLink
             to="/"
             className={`p-3 rounded-full transition-colors ${
@@ -92,8 +102,14 @@ export function Navigation() {
           >
             <EmptyIcon />
           </TransitionLink>
-        </div>
-        <div>
+        </nav>
+        <div className="flex gap-4 items-center">
+          <button
+            onClick={toggleActionPanel}
+            className="h-full aspect-square rounded-full bg-white/20 p-3 grid place-content-center"
+          >
+            a
+          </button>
           <button
             onClick={handleClearTracking}
             className="px-4 py-2 rounded-full bg-orange-600 text-white hover:bg-orange-700 transition-colors text-sm whitespace-nowrap"
@@ -102,7 +118,7 @@ export function Navigation() {
             Simulate Login
           </button>
         </div>
-      </nav>
-    </header>
+      </header>
+    </div>
   );
 }

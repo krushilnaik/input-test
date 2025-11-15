@@ -5,6 +5,8 @@ import { Navigation } from "@/components/Navigation";
 import { OverviewOverlay } from "@/components/OverviewOverlay";
 import { useAnimationContext } from "@/contexts/AnimationContext";
 import { useOverview } from "@/contexts/OverviewContext";
+import ActionPanel from "@/components/drawers/ActionPanel";
+import { useStore } from "@/stores/sidebar";
 
 export const Route = createRootRoute({
   component: RootComponent,
@@ -15,15 +17,19 @@ function RootComponent() {
   const pathname = router.location.pathname;
   const isBottomPage = pathname === "/bottom";
   const showInput = pathname === "/" || pathname === "/bottom";
-  const { textAnimationComplete } = useAnimationContext();
   const { isOverviewOpen } = useOverview();
+  const count = useStore((state) => state.count);
 
   return (
-    <main className="flex flex-col min-h-screen w-full bg-gray-900 text-white">
+    <main className="relative flex flex-col min-h-screen w-full bg-gray-900 text-white overflow-x-hidden">
       <Navigation />
       <div
-        className="h-screen pt-20 flex px-4"
-        style={{ opacity: isOverviewOpen ? 0 : 1, pointerEvents: isOverviewOpen ? "none" : "auto" }}
+        className="h-screen pt-20 flex px-4 transition-[width] duration-300 ease-in-out"
+        style={{
+          opacity: isOverviewOpen ? 0 : 1,
+          pointerEvents: isOverviewOpen ? "none" : "auto",
+          width: `calc(100vw - ${count})`,
+        }}
       >
         {showInput ? (
           <div
@@ -35,13 +41,14 @@ function RootComponent() {
             }}
           >
             <Outlet />
-            <AnimatedInput shouldStartAnimation={textAnimationComplete} />
+            <AnimatedInput />
           </div>
         ) : (
           <Outlet />
         )}
       </div>
       <OverviewOverlay />
+      <ActionPanel />
     </main>
   );
 }

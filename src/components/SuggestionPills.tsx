@@ -1,10 +1,10 @@
 import { useRouterState } from "@tanstack/react-router";
 import { useState } from "react";
 
-import { ChecklistIcon } from "@/atoms/ChecklistIcon";
-import { InfoIcon } from "@/atoms/InfoIcon";
-import { LightbulbIcon } from "@/atoms/LightbulbIcon";
-import { SparkleIcon } from "@/atoms/SparkleIcon";
+import { ChecklistIcon } from "@/atoms/icons/ChecklistIcon";
+import { InfoIcon } from "@/atoms/icons/InfoIcon";
+import { LightbulbIcon } from "@/atoms/icons/LightbulbIcon";
+import { SparkleIcon } from "@/atoms/icons/SparkleIcon";
 import { SuggestionPillItem } from "@/components/SuggestionPill";
 import type { SuggestionPill } from "@/components/SuggestionPill";
 

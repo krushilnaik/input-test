@@ -1,4 +1,4 @@
-import { SendIcon } from "@/atoms/SendIcon";
+import { SendIcon } from "@/atoms/icons/SendIcon";
 import { useSendButtonAnimation } from "@/hooks/useSendButtonAnimation";
 
 interface SendButtonProps {
