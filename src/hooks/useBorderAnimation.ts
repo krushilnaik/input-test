@@ -1,6 +1,6 @@
 import gsap from "gsap";
 
-import { COLORS, INPUT_DIMENSIONS } from "@/constants";
+import { COLORS, INPUT_DIMENSIONS } from "@/constants/borderAnimation";
 
 interface UseBorderAnimationParams {
   pathRef: React.RefObject<SVGPathElement | null>;

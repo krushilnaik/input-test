@@ -6,7 +6,7 @@ import { BorderAnimation } from "@/components/BorderAnimation";
 import { FilePills } from "@/components/FilePills";
 import { SendButton } from "@/components/SendButton";
 import { SuggestionPills } from "@/components/SuggestionPills";
-import { COLORS, INPUT_DIMENSIONS } from "@/constants";
+import { COLORS, INPUT_DIMENSIONS } from "@/constants/borderAnimation";
 import { useBorderAnimation } from "@/hooks/useBorderAnimation";
 import { useViewTransitionPause } from "@/hooks/useViewTransitionPause";
 import { useAnimationContext } from "@/contexts/AnimationContext";

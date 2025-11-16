@@ -1,6 +1,8 @@
+import { CloseIcon } from "@/atoms/icons/CloseIcon";
 import { HEADER_HEIGHT, PAGE_PADDING_X, PAGE_PADDING_Y } from "@/constants/sizes";
 import { useStore } from "@/stores/sidebar";
-import { useEffect, useMemo, useState, type PropsWithChildren } from "react";
+import { useEffect, useMemo, type PropsWithChildren } from "react";
+import "@/animations/drawer.css";
 
 interface DrawerProps {
   initialWidth: string;
@@ -10,7 +12,7 @@ interface DrawerProps {
   id: string;
 }
 
-function Drawer({
+export default function Drawer({
   initialWidth,
   isResizable = false,
   children,
@@ -21,11 +23,12 @@ function Drawer({
   const width = initialWidth;
   const right = PAGE_PADDING_X;
   const setCount = useStore((state) => state.setCount);
-  const [isOpen, setIsOpen] = useState(initialState === "open");
-
   useEffect(() => {
-    setCount(isOpen ? width : "0rem");
-  }, [isOpen]);
+    if (initialState === "open") {
+      document.getElementById(id)?.classList.add("open");
+      setCount(width);
+    }
+  }, [initialState]);
 
   useMemo(() => {
     setCount(width);
@@ -40,25 +43,28 @@ function Drawer({
   }, [HEADER_HEIGHT, PAGE_PADDING_Y]);
 
   const closeDrawer = () => {
-    setIsOpen(false);
+    document.getElementById(id)?.classList.remove("open");
+    setCount("0rem");
   };
 
   return (
     <div
       id={id}
+      data-width={width}
       style={{ width, height, top, right }}
-      className={`glass h-full absolute rounded-xl duration-500 ease-overshoot ${isOpen ? "opacity-100 pointer-events-auto translate-x-0" : "opacity-0 pointer-events-none translate-x-full"}`}
+      className="glass drawer h-full absolute rounded-xl duration-500 ease-overshoot"
     >
       {isResizable && <div className="absolute left-2 top-1/2 -translate-y-1/2 z-10">|</div>}
-      <div className="flex justify-between p-4">
+      <div className="flex justify-between items-center p-4">
         {header ?? <span>Drawer</span>}
-        <button onClick={closeDrawer} className="w-7 h-7 bg-transparent hover:bg-white/10 rounded-md">
-          x
+        <button
+          onClick={closeDrawer}
+          className="p-2 bg-white/0 hover:bg-white/10 rounded-md transition-colors duration-200"
+        >
+          <CloseIcon size={16} />
         </button>
       </div>
-      {children}
+      <div className="px-4">{children}</div>
     </div>
   );
 }
-
-export default Drawer;

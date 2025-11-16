@@ -57,7 +57,9 @@ export function Navigation() {
   }, []);
 
   const toggleActionPanel = useCallback(() => {
-    setCount(count === "0rem" ? "24rem" : "0rem");
+    const actionPanel = document.getElementById("actionPanel");
+    actionPanel?.classList.toggle("open");
+    setCount(actionPanel?.classList.contains("open") ? "24rem" : "0rem");
   }, [setCount, count]);
 
   return (

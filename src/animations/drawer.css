@@ -1,0 +1,11 @@
+.drawer.open {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateX(0);
+}
+
+.drawer {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateX(100%);
+}

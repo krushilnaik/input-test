@@ -1,4 +1,4 @@
-import { BORDER_CONFIG, INPUT_DIMENSIONS } from "@/constants";
+import { BORDER_CONFIG, INPUT_DIMENSIONS } from "@/constants/borderAnimation";
 
 export function createRoundedRectanglePath() {
   const inputWidth = INPUT_DIMENSIONS.width;
