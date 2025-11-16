@@ -71,26 +71,28 @@ export function AttachPopover({ isOpen, onClose, onUseExisting, onUploadNew, but
     };
   }, [isOpen, buttonRef]);
 
+  const onCloseRef = useRef(onClose);
+  useEffect(() => {
+    onCloseRef.current = onClose;
+  }, [onClose]);
+
   // Handle click outside
   useEffect(() => {
     if (!isOpen) return;
 
     const handleClickOutside = (event: MouseEvent) => {
       const target = event.target as Node;
-      if (
-        popoverRef.current &&
-        !popoverRef.current.contains(target) &&
-        buttonRef.current &&
-        !buttonRef.current.contains(target)
-      ) {
-        onClose();
+      const popover = popoverRef.current;
+      const button = buttonRef.current;
+
+      if (popover && !popover.contains(target) && button && !button.contains(target)) {
+        onCloseRef.current();
       }
     };
 
-    // Use click instead of mousedown to avoid conflicts with button clicks
     document.addEventListener("click", handleClickOutside, true);
     return () => document.removeEventListener("click", handleClickOutside, true);
-  }, [isOpen, onClose, buttonRef]);
+  }, [isOpen]); // Stable dependencies
 
   useGSAP(() => {
     if (!isOpen || !positionReady) return;

@@ -115,6 +115,7 @@ export function AnimatedInput({ onReady }: AnimatedInputProps) {
     const numSegments = COLORS.length;
     const segmentLength = (pathLength / numSegments) * 1.5;
     const spacing = segmentLength;
+    const isMountedRef = { current: true }; // Track if still mounted
 
     // Initialize glow segments with fade-in animation
     glowSegmentsRef.current.forEach((segment, index) => {
@@ -138,6 +139,11 @@ export function AnimatedInput({ onReady }: AnimatedInputProps) {
     const animationSpeed = 5; // seconds per full rotation
 
     function animateGlow(currentTime: number) {
+      // Exit early if unmounted or animation stopped
+      if (!isMountedRef.current || glowAnimationIdRef.current === null) {
+        return;
+      }
+
       if (startTime === null) startTime = currentTime;
       const elapsed = (currentTime - startTime) / 1000;
       const movement = (elapsed / animationSpeed) * pathLength;
@@ -151,12 +157,19 @@ export function AnimatedInput({ onReady }: AnimatedInputProps) {
         }
       });
 
-      if (glowAnimationIdRef.current !== null) {
-        glowAnimationIdRef.current = requestAnimationFrame(animateGlow);
-      }
+      glowAnimationIdRef.current = requestAnimationFrame(animateGlow);
     }
 
     glowAnimationIdRef.current = requestAnimationFrame(animateGlow);
+
+    // Return cleanup function
+    return () => {
+      isMountedRef.current = false;
+      if (glowAnimationIdRef.current !== null) {
+        cancelAnimationFrame(glowAnimationIdRef.current);
+        glowAnimationIdRef.current = null;
+      }
+    };
   }, []);
 
   const stopGlowAnimation = useCallback(() => {

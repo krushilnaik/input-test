@@ -23,6 +23,7 @@ export default function Drawer({
   const width = initialWidth;
   const right = PAGE_PADDING_X;
   const setCount = useStore((state) => state.setCount);
+
   useEffect(() => {
     if (initialState === "open") {
       document.getElementById(id)?.classList.add("open");

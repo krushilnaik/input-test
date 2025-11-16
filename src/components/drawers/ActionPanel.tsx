@@ -6,11 +6,7 @@ function ActionPanel() {
   const width = "24rem";
 
   const header = useMemo(() => {
-    return (
-      <div className="">
-        <h2 className="text-lg font-semibold">Action Panel</h2>
-      </div>
-    );
+    return <h2 className="font-semibold">Action Panel</h2>;
   }, []);
 
   return (

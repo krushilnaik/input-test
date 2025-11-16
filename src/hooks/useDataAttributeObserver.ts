@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 /**
  * Hook that observes changes to a data attribute on an element with a specific ID
@@ -8,37 +8,42 @@ import { useEffect, useState } from "react";
  */
 export function useDataAttributeObserver(elementId: string, dataAttribute: string): string | null {
   const [value, setValue] = useState<string | null>(null);
+  const observerRef = useRef<MutationObserver | null>(null);
 
   useEffect(() => {
     const element = document.getElementById(elementId);
 
     if (!element) {
       console.warn(`Element with ID "${elementId}" not found`);
+      setValue(null);
       return;
     }
 
     // Set initial value
     setValue(element.getAttribute(`data-${dataAttribute}`));
 
-    // Create a MutationObserver to watch for attribute changes
-    const observer = new MutationObserver((mutations) => {
-      mutations.forEach((mutation) => {
-        if (mutation.type === "attributes" && mutation.attributeName === `data-${dataAttribute}`) {
-          const newValue = element.getAttribute(`data-${dataAttribute}`);
-          setValue(newValue);
-        }
-      });
+    // Disconnect existing observer if any
+    if (observerRef.current) {
+      observerRef.current.disconnect();
+    }
+
+    // Create new observer
+    observerRef.current = new MutationObserver((mutations) => {
+      // mutations array will only have attribute changes we care about
+      const newValue = element.getAttribute(`data-${dataAttribute}`);
+      setValue(newValue);
     });
 
-    // Start observing the element for attribute changes
-    observer.observe(element, {
+    observerRef.current.observe(element, {
       attributes: true,
       attributeFilter: [`data-${dataAttribute}`],
     });
 
-    // Cleanup observer on unmount
     return () => {
-      observer.disconnect();
+      if (observerRef.current) {
+        observerRef.current.disconnect();
+        observerRef.current = null;
+      }
     };
   }, [elementId, dataAttribute]);
 

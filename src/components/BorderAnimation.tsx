@@ -52,10 +52,11 @@ export function BorderAnimation({ pathRef, segmentsRef, glowSegmentsRef, contain
   });
 
   useEffect(() => {
-    if (!containerRef.current) return;
+    const element = containerRef.current;
+    if (!element) return;
 
     const updatePath = () => {
-      const width = containerRef.current?.offsetWidth || INPUT_DIMENSIONS.width;
+      const width = element.offsetWidth || INPUT_DIMENSIONS.width;
       if (width > 0) {
         setPathData(createRoundedRectanglePath(width));
       }
@@ -66,12 +67,12 @@ export function BorderAnimation({ pathRef, segmentsRef, glowSegmentsRef, contain
 
     // Use ResizeObserver to watch for container size changes
     const resizeObserver = new ResizeObserver(updatePath);
-    resizeObserver.observe(containerRef.current);
+    resizeObserver.observe(element);
 
     return () => {
       resizeObserver.disconnect();
     };
-  }, [containerRef]);
+  }, []); // Empty deps - containerRef.current is set before first render
 
   const { pathD, svgWidth, svgHeight, borderOffset } = pathData;
 
