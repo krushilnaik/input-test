@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 
 import { Greeting } from "@/components/Greeting";
 import { useAnimationContext } from "@/contexts/AnimationContext";
-import { useOverview } from "@/contexts/OverviewContext";
+import { useOverviewStore } from "@/stores/overview";
 
 export const Route = createFileRoute("/")({
   component: CenterPage,
@@ -11,7 +11,7 @@ export const Route = createFileRoute("/")({
 
 function CenterPage() {
   const { onTextAnimationComplete } = useAnimationContext();
-  const { isOverviewOpen } = useOverview();
+  const { isOverviewOpen } = useOverviewStore();
   const [hasAnimated, setHasAnimated] = useState(() => {
     // Check sessionStorage to persist across remounts in StrictMode
     return sessionStorage.getItem("text-shimmer-animated") === "true";

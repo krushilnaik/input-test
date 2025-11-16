@@ -1,0 +1,7 @@
+#pageHeader.open {
+  transform: translateY(calc(-100% - 1rem));
+}
+
+#pageHeader {
+  transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}

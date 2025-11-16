@@ -1,11 +1,21 @@
+import { useMemo } from "react";
 import Drawer from "./Drawer";
+import { OverviewButton } from "../action-panel/OverviewButton";
 
 function ActionPanel() {
   const width = "24rem";
 
+  const header = useMemo(() => {
+    return (
+      <div className="">
+        <h2 className="text-lg font-semibold">Action Panel</h2>
+      </div>
+    );
+  }, []);
+
   return (
-    <Drawer id="actionPanel" initialWidth={width} isResizable={false} initialState="open">
-      hi
+    <Drawer header={header} id="actionPanel" initialWidth={width} isResizable={false} initialState="open">
+      <OverviewButton />
     </Drawer>
   );
 }

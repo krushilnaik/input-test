@@ -1,7 +1,10 @@
 import ReactMarkdown from "react-markdown";
 
 import { Greeting } from "@/components/Greeting";
-import { useOverview } from "@/contexts/OverviewContext";
+import { useOverviewStore } from "@/stores/overview";
+import { CloseIcon } from "@/atoms/icons/CloseIcon";
+import { InfoIcon } from "@/atoms/icons/InfoIcon";
+import "@/animations/header.css";
 
 const content = `
 # Overview
@@ -25,20 +28,29 @@ Use this as a quick reference to understand what's most important right now.
 `;
 
 export function OverviewOverlay() {
-  const { isOverviewOpen } = useOverview();
+  const { isOverviewOpen, closeOverview } = useOverviewStore();
 
   return (
     <div
-      className="fixed inset-0 z-50 flex flex-col bg-gray-900"
+      id="overviewOverlay"
+      data-state={isOverviewOpen ? "open" : "closed"}
+      className="fixed inset-0 z-50 flex flex-col"
       style={{
         opacity: isOverviewOpen ? 1 : 0,
         pointerEvents: isOverviewOpen ? "auto" : "none",
       }}
     >
       <div className="flex-1 flex items-start justify-center pt-32 p-8 overflow-auto">
-        <div className="max-w-5xl w-full">
-          {/* Greeting with view transition name for slide effect */}
+        <div className="max-w-5xl w-full relative">
           {isOverviewOpen && <Greeting greetingText="Your briefing" hasAnimated setHasAnimated={() => {}} />}
+          <div className="inline-flex items-center gap-4 right-0 top-4 absolute">
+            <button>
+              <InfoIcon size={20} />
+            </button>
+            <button onClick={closeOverview}>
+              <CloseIcon size={20} />
+            </button>
+          </div>
 
           {/* Overview content */}
           <section className="space-y-6 text-white mt-8">

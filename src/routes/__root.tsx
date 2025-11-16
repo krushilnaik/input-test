@@ -3,8 +3,7 @@ import { Outlet, createRootRoute, useRouterState } from "@tanstack/react-router"
 import { AnimatedInput } from "@/components/AnimatedInput";
 import { Navigation } from "@/components/Navigation";
 import { OverviewOverlay } from "@/components/OverviewOverlay";
-import { useAnimationContext } from "@/contexts/AnimationContext";
-import { useOverview } from "@/contexts/OverviewContext";
+import { useOverviewStore } from "@/stores/overview";
 import ActionPanel from "@/components/drawers/ActionPanel";
 import { useStore } from "@/stores/sidebar";
 
@@ -17,7 +16,7 @@ function RootComponent() {
   const pathname = router.location.pathname;
   const isBottomPage = pathname === "/bottom";
   const showInput = pathname === "/" || pathname === "/bottom";
-  const { isOverviewOpen } = useOverview();
+  const { isOverviewOpen } = useOverviewStore();
   const count = useStore((state) => state.count);
 
   return (

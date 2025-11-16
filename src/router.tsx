@@ -1,7 +1,6 @@
 import { RouterProvider, createRouter } from "@tanstack/react-router";
 
 import { AnimationProvider } from "@/contexts/AnimationContext";
-import { OverviewProvider } from "@/contexts/OverviewContext";
 
 import { routeTree } from "./routeTree.gen";
 
@@ -16,9 +15,7 @@ declare module "@tanstack/react-router" {
 export function AppRouter() {
   return (
     <AnimationProvider>
-      <OverviewProvider>
-        <RouterProvider router={router} />
-      </OverviewProvider>
+      <RouterProvider router={router} />
     </AnimationProvider>
   );
 }
