@@ -3,9 +3,9 @@ import { Outlet, createRootRoute, useRouterState } from "@tanstack/react-router"
 import { AnimatedInput } from "@/components/AnimatedInput";
 import { Navigation } from "@/components/Navigation";
 import { OverviewOverlay } from "@/components/OverviewOverlay";
-import { useOverviewStore } from "@/stores/overview";
+import { useOverviewStore } from "@/stores/overviewStore";
 import ActionPanel from "@/components/drawers/ActionPanel";
-import { useStore } from "@/stores/sidebar";
+import { useStore } from "@/stores/sidebarStore";
 
 export const Route = createRootRoute({
   component: RootComponent,

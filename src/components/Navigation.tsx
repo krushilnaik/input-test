@@ -8,7 +8,7 @@ import { CenterIcon } from "@/atoms/icons/CenterIcon";
 import { EmptyIcon } from "@/atoms/icons/EmptyIcon";
 import { TransitionLink } from "@/components/TransitionLink";
 import { HEADER_HEIGHT, PAGE_PADDING_X, PAGE_PADDING_Y } from "@/constants/sizes";
-import { useStore } from "@/stores/sidebar";
+import { useStore } from "@/stores/sidebarStore";
 
 const SESSION_STORAGE_KEY = "text-shimmer-animated";
 

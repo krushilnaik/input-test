@@ -1,5 +1,5 @@
 import { OverviewIcon } from "@/atoms/icons/OverviewIcon";
-import { useOverviewStore } from "@/stores/overview";
+import { useOverviewStore } from "@/stores/overviewStore";
 import { useCallback } from "react";
 import { flushSync } from "react-dom";
 

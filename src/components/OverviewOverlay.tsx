@@ -1,7 +1,7 @@
 import ReactMarkdown from "react-markdown";
 
 import { Greeting } from "@/components/Greeting";
-import { useOverviewStore } from "@/stores/overview";
+import { useOverviewStore } from "@/stores/overviewStore";
 import { CloseIcon } from "@/atoms/icons/CloseIcon";
 import { InfoIcon } from "@/atoms/icons/InfoIcon";
 import "@/animations/header.css";

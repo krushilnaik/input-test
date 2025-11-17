@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 
 import { Greeting } from "@/components/Greeting";
 import { useAnimationContext } from "@/contexts/AnimationContext";
-import { useOverviewStore } from "@/stores/overview";
+import { useOverviewStore } from "@/stores/overviewStore";
 
 export const Route = createFileRoute("/")({
   component: CenterPage,

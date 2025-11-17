@@ -1,6 +1,6 @@
 import { CloseIcon } from "@/atoms/icons/CloseIcon";
 import { HEADER_HEIGHT, PAGE_PADDING_X, PAGE_PADDING_Y } from "@/constants/sizes";
-import { useStore } from "@/stores/sidebar";
+import { useStore } from "@/stores/sidebarStore";
 import { useEffect, useMemo, type PropsWithChildren } from "react";
 import "@/animations/drawer.css";
 

@@ -1,5 +1,5 @@
 import { HEADER_HEIGHT, PAGE_PADDING_X, PAGE_PADDING_Y } from "@/constants/sizes";
-import { useStore } from "@/stores/sidebar";
+import { useStore } from "@/stores/sidebarStore";
 import { useMemo } from "react";
 
 function ActionPanel() {
