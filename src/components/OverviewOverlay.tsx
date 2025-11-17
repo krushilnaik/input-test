@@ -1,10 +1,13 @@
-import ReactMarkdown from "react-markdown";
+import { useRef } from "react";
+import { gsap } from "gsap";
+import { useGSAP } from "@gsap/react";
 
 import { Greeting } from "@/components/Greeting";
 import { useOverviewStore } from "@/stores/overviewStore";
 import { CloseIcon } from "@/atoms/icons/CloseIcon";
 import { InfoIcon } from "@/atoms/icons/InfoIcon";
 import "@/animations/header.css";
+import MarkdownRenderer from "./markdown/MarkdownRenderer";
 
 const content = `
 # Overview
@@ -29,18 +32,43 @@ Use this as a quick reference to understand what's most important right now.
 
 export function OverviewOverlay() {
   const { isOverviewOpen, closeOverview } = useOverviewStore();
+  const articlesRef = useRef<HTMLElement>(null);
+
+  useGSAP(
+    () => {
+      if (isOverviewOpen && articlesRef.current) {
+        const articles = articlesRef.current.querySelectorAll("article");
+
+        gsap.fromTo(
+          articles,
+          {
+            opacity: 0,
+            y: 50,
+          },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.6,
+            stagger: 0.15,
+            ease: "power2.out",
+          }
+        );
+      }
+    },
+    { dependencies: [isOverviewOpen] }
+  );
 
   return (
     <div
       id="overviewOverlay"
       data-state={isOverviewOpen ? "open" : "closed"}
-      className="fixed inset-0 z-50 flex flex-col"
+      className="fixed inset-0 z-500 flex flex-col"
       style={{
         opacity: isOverviewOpen ? 1 : 0,
         pointerEvents: isOverviewOpen ? "auto" : "none",
       }}
     >
-      <div className="flex-1 flex items-start justify-center pt-32 p-8 overflow-auto">
+      <div className="flex-1 flex items-start justify-center p-8 overflow-auto">
         <div className="max-w-5xl w-full relative">
           {isOverviewOpen && <Greeting greetingText="Your briefing" hasAnimated setHasAnimated={() => {}} />}
           <div className="inline-flex items-center gap-4 right-0 top-4 absolute">
@@ -53,10 +81,10 @@ export function OverviewOverlay() {
           </div>
 
           {/* Overview content */}
-          <section className="space-y-6 text-white mt-8">
+          <section ref={articlesRef} className="space-y-6 text-white mt-8">
             {content.split("---").map((section, i) => (
               <article key={`overview-${i}`}>
-                <ReactMarkdown>{section + "\n---\n"}</ReactMarkdown>
+                <MarkdownRenderer content={section + "\n---\n"} />
               </article>
             ))}
           </section>

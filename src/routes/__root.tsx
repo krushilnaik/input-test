@@ -6,6 +6,7 @@ import { OverviewOverlay } from "@/components/OverviewOverlay";
 import { useOverviewStore } from "@/stores/overviewStore";
 import ActionPanel from "@/components/drawers/ActionPanel";
 import { useStore } from "@/stores/sidebarStore";
+import Canvas from "@/components/drawers/Canvas";
 
 export const Route = createRootRoute({
   component: RootComponent,
@@ -47,6 +48,7 @@ function RootComponent() {
         )}
       </div>
       <OverviewOverlay />
+      <Canvas />
       <ActionPanel />
     </main>
   );

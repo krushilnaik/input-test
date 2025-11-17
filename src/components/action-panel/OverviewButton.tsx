@@ -1,3 +1,4 @@
+import { ArrowIcon } from "@/atoms/icons/ArrowIcon";
 import { OverviewIcon } from "@/atoms/icons/OverviewIcon";
 import { useOverviewStore } from "@/stores/overviewStore";
 import { useCallback } from "react";
@@ -22,9 +23,16 @@ export function OverviewButton() {
   return (
     <button
       onClick={handleClick}
-      className="p-3 rounded-full transition-colors bg-gray-800/50 text-gray-300 hover:bg-gray-700/50"
+      className="p-3 rounded-full w-full bg-gray-800/50 text-gray-300 hover:bg-gray-700/50 flex justify-between items-center px-4"
     >
-      <OverviewIcon />
+      <div className="flex items-center gap-1">
+        <OverviewIcon size={16} />
+        <span>Your briefing</span>
+      </div>
+      <div className="flex items-center text-sm justify-self-end gap-0.5">
+        <span>View</span>
+        <ArrowIcon />
+      </div>
     </button>
   );
 }
